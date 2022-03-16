@@ -6,6 +6,6 @@ cmake_minimum_required (VERSION 3.8)
 project ("OptimizationLib")
 
 # Add source to this project's executable.
-add_executable (OptimizationLib "OptimizationLib.cpp" )
+add_executable (OptimizationLib "main.cpp" )
 
 # TODO: Add tests and install targets if needed.
