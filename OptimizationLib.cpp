@@ -1,12 +1,34 @@
-﻿// OptimizationLib.cpp : Defines the entry point for the application.
-//
+#include "stdafx.h"
 
-#include "OptimizationLib.h"
-
-using namespace std;
+#ifdef DEBUG_LIB
+	#include "testFunction.h"
+	#include "testState.h"
+	#include "testOptimizer.h"
+#endif // DEBUG_LIB
 
 int main()
 {
-	cout << "Hello CMake." << endl;
-	return 0;
+#ifdef DEBUG_LIB
+	// test functions
+	OptLib::UnitTests::testFunction::testGradient();
+	OptLib::UnitTests::testFunction::testHessian();
+	OptLib::UnitTests::testFunction::test2DHessian();
+	OptLib::UnitTests::testFunction::test2DWithHessNoGrad();
+	OptLib::UnitTests::testFunction::testParaboloid();
+	OptLib::UnitTests::testFunction::testParaboloidAlongDirection();
+
+	// test states
+	OptLib::UnitTests::testState::testStateSimplex();
+	//OptLib::UnitTests::testState::testStatePoint(); // TODO
+	//OptLib::UnitTests::testState::testStateStochastic(); // TODO
+
+	// test optimizers
+	OptLib::UnitTests::testOptimizer::testBicection();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithBicection(); // TODO
+
+	//testOptimizer::testOptimizer_();
+
+
+#endif // DEBUG_LIB
+
 }
