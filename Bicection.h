@@ -61,7 +61,7 @@ namespace OptLib
 					new_simplex = Simplex<2, 1>{ { mesh[pos - 1], mesh[pos + 1] } };
 					set_end_vals(vals[pos - 1], vals[pos + 1]);
 				}
-				state = std::unique_ptr<ConcreteState::StateSimplex<1>>{ new ConcreteState::StateSimplex<1>{new_simplex} };
+				state = new ConcreteState::StateSimplex<1>{new_simplex};
 				return PointAndVal<1> { CurrentGuess(), f->operator()(CurrentGuess()) };
 			}
 
