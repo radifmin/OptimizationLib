@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
 #ifdef DEBUG_LIB
-	#include "testFunction.h"
-	#include "testState.h"
-	#include "testOptimizer.h"
+	#include "OptLib/TestMethods/testFunction.h"
+	#include "OptLib/TestMethods/testState.h"
+	#include "OptLib/TestMethods/testOptimizer.h"
 #endif // DEBUG_LIB
 
 int main()

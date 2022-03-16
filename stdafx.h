@@ -12,14 +12,14 @@
 #include <tuple>
 #include <iterator>
 
-#include "Simplex.h"
+#include "OptLib/AuxMethods/Simplex.h"
 
-#include "FunctionInterface.h"
-#include "Function.h"
+#include "OptLib/Functions/FunctionInterface.h"
+#include "OptLib/Functions/Function.h"
 
-#include "StateInterface.h"
-#include "State.h"
+#include "OptLib/States/StateInterface.h"
+#include "OptLib/States/State.h"
 
-#include "OptimizerInterface.h"
-#include "Bicection.h"
+#include "OptLib/Optimizers/OptimizerInterface.h"
+#include "OptLib/Optimizers/OneDim/Bicection.h"
 //#include "OverallOptimizer.h"
