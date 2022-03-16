@@ -36,6 +36,10 @@ namespace OptLib
 			void SetDomain(Simplex<dim + 1, dim>&& state) { its_guess_domain = state; its_guess = AuxMethods::mean(GuessDomain()); }
 		};
 
+
+		using State1D = StateSimplex<1>;
+
+
 		/// <summary>
 		/// First and second order methods require only a point rather than entire simplex for optimization
 		/// </summary>
