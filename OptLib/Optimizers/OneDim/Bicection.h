@@ -6,68 +6,87 @@ namespace OptLib
 	namespace ConcreteOptimizer
 	{
 		using namespace AuxMethods;
-		class Bicection : public OptimizerInterface::IDirectAlgo<1>
+		class Bicection : public OptimizerInterface::ISegmentAlgo
 		{
-		//	using OptimizerInterface::IDirectAlgo<1>::f;
-
-			void set_end_vals(double lval, double rval)
-			{
-				val_left = lval; val_right = rval;
-				val_center = this->f->operator()(this->CurrentGuess());
-			}
-
+			SetOfPoints<5, PointVal<1>> AuxPoints;
 		public:
-			Bicection(FuncInterface::IFunc<1>* f, ConcreteState::StateSimplex<1>* state_pointer) :IDirectAlgo<1>{ f, state_pointer }
+			Bicection(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
+				OptimizerInterface::ISegmentAlgo{ f_pointer, std::move(setOfPoints) }
 			{
-				set_end_vals(f->operator()(CurSimplex()[0]), f->operator()(CurSimplex()[1]));
-			}
-		public:
-			Point<1> left() { return CurSimplex()[0]; }
-			Point<1> right() { return CurSimplex()[1]; }
+				AuxPoints[0] = state.GuessDomain().Simplex()[0];
+				AuxPoints[4] = state.GuessDomain().Simplex()[1];
 
-			virtual PointAndVal<1> proceed() override
-			{
-				Point<1> step = (right() - left()) / 4.0;
+				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 
-				std::array<Point<1>, 5> mesh{
-					left(),
-					left() + step,
-					CurrentGuess(),
-					right() - step,
-					right() };
-				std::array<double, 5> vals{
-					val_left,
-					f->operator()(mesh[1]),
-					val_center,
-					f->operator()(mesh[3]),
-					val_right };
-
-				std::array<double, 5>::iterator min = std::min_element(vals.begin(), vals.end());
-				size_t pos = std::distance(vals.begin(), min);
-
-				Simplex<2, 1> new_simplex;
-				if (pos == 0)
+				for (int i = 1; i < 4; i++)
 				{
-					new_simplex = Simplex<2, 1>{ { mesh[0], mesh[1] } };
-					set_end_vals(vals[0], vals[1]);
+					Point<1> x{ AuxPoints[i - 1].P[0] + step };
+					AuxPoints[i] = PointVal{ std::move(x), f->operator()(x) };
 				}
-				else if (pos == vals.size() - 1)
+			}
+		public:
+			virtual PointVal<1> Proceed() override
+			{
+				SetOfPoints<5, PointVal<1>>::iterator min = std::min_element(AuxPoints.begin(), AuxPoints.end());
+				size_t pos = std::distance(AuxPoints.begin(), min);
+
+				if (pos == 0)
+				{// keep AuxPoints[0]
+					AuxPoints[4] = AuxPoints[1];
+					temp2();
+				}
+				else if (pos == AuxPoints.size() - 1)
+				{// keep AuxPoints[4]
+					AuxPoints[0] = AuxPoints[3];
+					temp2();
+				}
+				else if(pos == 1)
 				{
-					new_simplex = Simplex<2, 1>{ { mesh[3], mesh[4] } };
-					set_end_vals(vals[3], vals[4]);
+					AuxPoints[4] = AuxPoints[2];
+					AuxPoints[2] = AuxPoints[1];
+				//	AuxPoints[0] = AuxPoints[0];
+					temp1();
+				}
+				else if (pos == 2)
+				{
+					AuxPoints[0] = AuxPoints[1];
+				//	AuxPoints[2] = AuxPoints[2];
+					AuxPoints[4] = AuxPoints[3];
+					temp1();
 				}
 				else
 				{
-					new_simplex = Simplex<2, 1>{ { mesh[pos - 1], mesh[pos + 1] } };
-					set_end_vals(vals[pos - 1], vals[pos + 1]);
+					AuxPoints[0] = AuxPoints[2];
+					AuxPoints[2] = AuxPoints[3];
+				//	AuxPoints[4] = AuxPoints[4];
+					temp1();
 				}
-				state = new ConcreteState::StateSimplex<1>{new_simplex};
-				return PointAndVal<1> { CurrentGuess(), f->operator()(CurrentGuess()) };
+
+				SetOfPoints<2, PointVal<1>> D{ AuxPoints[0], AuxPoints.back() };
+
+				state.UpdateDomain({ AuxPoints[0], AuxPoints.back() });
+				//			state = new ConcreteState::StateSimplex<1>{new_simplex};
+				return state.Guess();
 			}
 
 		protected:
-			double val_left, val_right, val_center;
+			void temp1()
+			{
+				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
+				Point<1> x{ AuxPoints[0].P[0] + step };
+				AuxPoints[1] = PointVal{ std::move(x), f->operator()(x) };
+				x = Point<1>{ AuxPoints[2].P[0] + step };
+				AuxPoints[3] = PointVal{ std::move(x), f->operator()(x) };
+			}
+			void temp2()
+			{
+				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
+				for (int i = 1; i < 4; i++)
+				{
+					Point<1> x{ AuxPoints[i - 1].P[0] + step };
+					AuxPoints[i] = PointVal{ std::move(x), f->operator()(x) };
+				}
+			}
 		};
-
 	} // Optimizer
 } // OptLib

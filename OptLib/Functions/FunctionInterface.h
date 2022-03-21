@@ -23,7 +23,7 @@ namespace OptLib
 		class IHess
 		{
 		public:
-			virtual std::array<Point<dim>, dim> hess(const std::array<double, dim>& x) const = 0;
+			virtual SetOfPoints<dim, Point<dim>> hess(const Point<dim>& x) const = 0;
 		};
 
 		template <int dim>

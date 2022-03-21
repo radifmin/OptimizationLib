@@ -3,44 +3,72 @@
 
 namespace OptLib
 {
-	template<int dim>
-	using PointAndVal = std::pair<Point<dim>, double>;
-
 	namespace OptimizerInterface
 	{
-		template<int dim, typename func, typename state>
+		template<int dim, typename func, typename stateT>
 		class IOptimizerAlgorithm
 		{
 		public:
-			IOptimizerAlgorithm(func* f_pointer, state* state_pointer) :
-				f{ f_pointer }, state{ state_pointer } {	}
+			IOptimizerAlgorithm(func* f_pointer, SetOfPoints<dim + 1, Point<dim>>&& setOfPoints) :
+				f{ f_pointer }, state{ std::move(setOfPoints), f_pointer }{}
 
-			virtual Point<dim> CurrentGuess() const { return state->guess(); }; // returns current guess
-			PointAndVal<dim> CurrentPointAndVal() // returns the guess and the function value
+			virtual Point<dim> CurrentGuess() const { return state.Guess(); }; // returns current guess
+			PointVal<dim> CurrentPointAndVal() // returns the guess and the function value
 			{
 				Point<dim> p = CurrentGuess();
-				return PointAndVal<dim>{p, f->operator()(p)};
+				return PointVal<dim>{p, f->operator()(p)};
 			}
 
-			virtual bool is_converged(double abs_tol, double rel_tol) const
+			virtual bool IsConverged(double abs_tol, double rel_tol) const
 			{
-				return state->is_converged(abs_tol, rel_tol);
+				return state.IsConverged(abs_tol, rel_tol);
 			}
 
-			virtual PointAndVal<dim> proceed() = 0; // continue to next guess
+			virtual PointVal<dim> Proceed() = 0; // continue to next guess
 
 		protected:
-			func*  f; // function to optimize
-			state* state; // state of the method
+			const func* f; // function to optimize
+			stateT state; // state of the method
 		};
 
-		template<int dim>
-		class IDirectAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, ConcreteState::StateSimplex<dim>>
+		/// <summary>
+		/// Optimization using simplex methods in N-dim space. Common interface for Direct and 1D segment optimization methods.
+		/// state must implement GuessDomain method
+		/// </summary>
+		template<int dim, typename stateT, typename simplex>
+		class ISimplexAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>
 		{
 		public:
-			IDirectAlgo(FuncInterface::IFunc<dim>* f_pointer, ConcreteState::StateSimplex<dim>* state_pointer) :
-				IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, ConcreteState::StateSimplex<dim>>{ f_pointer, state_pointer } {}
-			const Simplex<dim + 1, dim>& CurSimplex() const { return this->state->GuessDomain(); } // unique for direct methods
+			ISimplexAlgo(
+				FuncInterface::IFunc<dim>* f_pointer, 
+				SetOfPoints<dim + 1, Point<dim>>&& setOfPoints) 
+				:
+				IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>{ f_pointer, std::move(setOfPoints) } {}
+			const simplex& GuessDomain() const { return this->state.GuessDomain(); } // unique for direct methods
+		};
+
+
+		/// <summary>
+		/// Direct optimization in N-dim space with simplex points sorting according to f(x)
+		/// </summary>
+		template<int dim>
+		using IDirectAlgo = ISimplexAlgo<dim, ConcreteState::StateDirect<dim>, SimplexValSort<dim + 1, dim>>;
+
+		/// <summary>
+		/// Algorithms for 1D optimization on a segment. Segment [x1; x2], where it is guaranteed that x1 < x2
+		/// </summary>
+		class ISegmentAlgo : public ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<2, 1>>
+		{
+		public:
+			ISegmentAlgo(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
+				ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<2, 1>>{ f_pointer, std::move(OrderPointsInSegment(setOfPoints)) } {}
+		protected:
+			SetOfPoints<2, Point<1>> OrderPointsInSegment(SetOfPoints<2, Point<1>>& setOfPoints)
+			{
+				if (setOfPoints[0][0] > setOfPoints[1][0])
+					std::swap(setOfPoints[0], setOfPoints[1]);
+				return setOfPoints;
+			}
 		};
 
 		template<int dim>

@@ -11,20 +11,15 @@ namespace OptLib
 		public:
 			static void testBicection()
 			{
-				std::cout << "******Direct Optimization test start*****\n";
-
-				ConcreteFunc::FunctionWithHess f{};
-				ConcreteState::StateSimplex<1> state{ Simplex<2, 1>{ { {-2}, { 5 }}} };
-
-				ConcreteOptimizer::Bicection algo{ &f, &state };
-
-				std::cout << "Current simplex is:\n" << "  " << algo.CurSimplex() << "\n";
-				algo.proceed();
-				std::cout << "Current simplex is:\n" << "  " << algo.CurSimplex() << "\n";
-				algo.proceed();
-				std::cout << "Current simplex is:\n" << "  " << algo.CurSimplex() << "\n";
-
-				std::cout << "******Direct Optimization test end*******\n\n";
+				std::cout << "******Bicection test start*****\n";
+				ConcreteOptimizer::Bicection algo{ new ConcreteFunc::FunctionWithHess{}, {{{-2}, {5}}} };
+				std::cout << "Current simplex is:\n" << "  " << algo.GuessDomain() << "\n";
+				for (int i = 0; i < 10; i++)
+				{
+					algo.Proceed();
+					std::cout << "Current simplex is:\n" << "  " << algo.GuessDomain() << "\n";
+				}
+				std::cout << "******Bicection test end*******\n\n";
 			}
 
 			static void testOverallOptimizer_WithBicection()

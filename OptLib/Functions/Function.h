@@ -15,9 +15,9 @@ namespace OptLib
 		class Paraboloid : public FuncInterface::IFuncWithHess<dim>
 		{
 		protected:
-			Simplex<dim, dim> hessian, coef_matrix;
+			SetOfPoints<dim, Point<dim>> hessian, coef_matrix;
 		public:
-			Paraboloid(const Simplex<dim, dim> coefs) : hessian{ coefs }, coef_matrix{coefs}
+			Paraboloid(const SetOfPoints<dim, Point<dim>> coefs) : hessian{ coefs }, coef_matrix{coefs}
 			{
 				// transform coefficientts to hessian symmetric matrix
 				// make the hessian matrix symmetric
@@ -35,7 +35,7 @@ namespace OptLib
 				for (int i = 0; i < dim; i++)
 					for (int j = i + 1; j < dim; j++)
 					{
-						double temp = (coef_matrix[i][j] + coef_matrix[j][i])/2.0;
+						double temp = (coef_matrix[i][j] + coef_matrix[j][i]) / 2.0;
 						coef_matrix[i][j] = temp;
 						coef_matrix[j][i] = temp;
 					}
@@ -60,27 +60,25 @@ namespace OptLib
 
 			virtual Point<dim> grad(const Point<dim>& x) const override
 			{
-				Point<dim> result;
+				Point<dim> result{};
 				for (int i = 0; i < dim; i++)
-					result[i] = scalar_product(x, CoefMatrix()[i]) + x[i]*x[i];
+					result[i] = 2*scalar_product(x, CoefMatrixRow(i));
 				return result;
 			}
 
-			virtual Simplex<dim, dim> hess(const Point<dim>& x) const override
+			virtual SetOfPoints<dim, Point<dim>> hess(const Point<dim>& x) const override
 			{
 				return hessian;
 			}
 
 		protected:
-			Simplex<dim, dim> CoefMatrix() const
+			SetOfPoints<dim, Point<dim>> CoefMatrix() const
 			{
 				return coef_matrix;
-
-				auto result = hessian;
-				for (int i = 0; i < dim; i++)
-					for (int j = 0; j < dim; j++)
-					result[i][j] = result[i][j] / 2.0;
-				return result;
+			}
+			const Point<dim>& CoefMatrixRow(int i) const
+			{
+				return CoefMatrix()[i];
 			}
 		};
 
@@ -89,24 +87,6 @@ namespace OptLib
 		/// Paraboloid in 2D space, without hessian
 		/// </summary>
 		using Paraboloid2D = Paraboloid<2>;
-		//class Function2D : public FuncInterface::IFuncWithGrad<2>
-		//{
-		//public:
-		//	Function2D()
-		//	{
-		//		std::cout << "Parabola  x^2 + y^2  has been instantiated.\n";
-		//	}
-		//public:
-		//	virtual double operator () (const std::array<double, 2>& x) const override
-		//	{
-		//		return x[0] * x[0] + x[1] * x[1];
-		//	}
-		//	virtual Point<2> grad(const Point<2>& x) const override
-		//	{
-		//		return Point<2>{2 * x[0], 2 * x[1]};
-		//	}
-		//};
-
 
 
 		/// <summary>
@@ -141,9 +121,9 @@ namespace OptLib
 		class FunctionWithHess : public Function, public FuncInterface::IHess<1>
 		{
 		public:
-			virtual Simplex<1,1> hess(const Point<1>& x) const override
+			virtual SetOfPoints<1, Point<1>> hess(const Point<1>& x) const override
 			{
-				return Simplex<1, 1>{ {2} };
+				return SetOfPoints<1, Point<1>>{ { {2}} };
 			}
 		};
 
@@ -157,13 +137,13 @@ namespace OptLib
 #endif // DEBUG_LIB
 
 			}
-			virtual double operator () (const std::array<double, 2>& x) const override
+			virtual double operator () (const Point<2>& x) const override
 			{
 				return x[0] * x[0] + x[1] * x[1];
 			}
-			virtual Simplex<2,2> hess(const Point<2>& x) const override
+			virtual SetOfPoints<2,Point<2>> hess(const Point<2>& x) const override
 			{
-				return Simplex<2, 2>{ { {2.0, 0.0}, { 0.0, 2.0 }} };
+				return SetOfPoints<2, Point<2>>{ { { {2.0, 0.0} }, { { 0.0, 2.0 }}} };
 			}
 		};
 
@@ -185,17 +165,19 @@ namespace OptLib
 			virtual Point<1> grad(const Point<1>& gamma) const override
 			{
 				Point<dim> gr = f->grad(x0 - grad0 * gamma[0]);
-				double result = 0.0;
+				/*double result = 0.0;
 				for (int i = 0; i < dim; i++)
 					result += gr[i] * grad0[i];
-				return Point<1>{-result};
+				return Point<1>{-result};*/
+
+				return Point<1>{-scalar_product(gr, grad0)};
 			}
 
 		protected:
 			Point<dim> x0;
 			Point<dim> grad0;
 
-			std::shared_ptr<FuncInterface::IFuncWithGrad<dim>>  f;// function to optimize
+			FuncInterface::IFuncWithGrad<dim>*  f;// function to optimize
 		};
 	} // ConcreteFuncs
 
