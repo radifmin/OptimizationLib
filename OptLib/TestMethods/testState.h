@@ -39,9 +39,11 @@ namespace OptLib
 				std::cout << "The state simplex is     " << state.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << state.IsConverged(0.01, 0.01) << "\n";
 
-				//state.SetDomain({ {{0.0,0.3},{2.0,1.5},{1.0,2.0}} }, &f);
-				//std::cout << "The new state simplex is " << state.GuessDomain() << "\n";
-				//std::cout << "The state is converged:  " << state.IsConverged(0.01, 0.01) << "\n";
+			//	SetOfPoints<2, Point<1>> ss{ { {-1.5},{2.0} } };
+				
+				state.SetDomain({ { {-7},{2.0} } }, &f);
+				std::cout << "The new state simplex is " << state.GuessDomain() << "\n";
+				std::cout << "The state is converged:  " << state.IsConverged(0.01, 0.01) << "\n";
 
 				std::cout << "******StateSegment test end*******\n\n";
 			}

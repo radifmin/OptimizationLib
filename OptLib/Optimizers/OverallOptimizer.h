@@ -13,43 +13,42 @@ namespace OptLib
 	class Optimizer
 	{
 	public:
-		double tol_f() { return prm.eps_f; }
-		double tol_x() { return prm.eps_x; }
-		int max_iter_count() { return prm.max_iter; }
-		int cur_iter_count() { return s; }
-		Point<dim> CurrentGuess() { return algo->CurrentGuess(); }
+		double tol_f() { return Prm.eps_f; }
+		double tol_x() { return Prm.eps_x; }
+		int MaxIterCount() { return Prm.max_iter; }
+		int CurIterCount() { return s; }
+		PointVal<dim> CurrentGuess() { return Algo->CurrentPointAndVal(); }
 
 	public:
-		Optimizer(IOptimizerAlgorithm<dim>* algo_pointer, OptimizerParams _prm) :
-			prm{ _prm },
+		Optimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* algo_pointer, OptimizerParams prm) :
+			Prm{ prm },
 			s{ 0 },
-			algo{ algo_pointer }{	}
+			Algo{ algo_pointer }{	}
 
 		Point<dim> Optimize()
 		{
 			// TODO : separate thread
 			bool f = false;
 			while (!f &&
-				s < max_iter_count())
+				s < MaxIterCount())
 			{
-				algo->proceed();
+				Algo->Proceed();
 				s++;
-				f = algo->is_converged(tol_x(), tol_x());
+				f = Algo->IsConverged(tol_x(), tol_x());
 			}
 			return CurrentGuess();
 		}
 
 		Point<dim> Continue(double eps_x, double eps_f)
 		{
-			prm.eps_f = eps_f;
-			prm.eps_x = eps_x;
+			Prm.eps_f = eps_f;
+			Prm.eps_x = eps_x;
 			return Optimize();
 		}
 
 	protected:
-		std::unique_ptr<IOptimizerAlgorithm<dim>, func, state> algo;
+		OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* Algo;
 		int s; // current number of iterations
-		OptimizerParams prm;
+		OptimizerParams Prm;
 	};
-
 } // OptLib

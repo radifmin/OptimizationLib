@@ -29,7 +29,7 @@ int main()
 
 	// test optimizers
 	OptLib::UnitTests::testOptimizer::testBicection();
-	//OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithBicection(); // TODO
+	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithBicection(); 
 
 	//testOptimizer::testOptimizer_();
 
