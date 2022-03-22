@@ -165,10 +165,6 @@ namespace OptLib
 			virtual Point<1> grad(const Point<1>& gamma) const override
 			{
 				Point<dim> gr = f->grad(x0 - grad0 * gamma[0]);
-				/*double result = 0.0;
-				for (int i = 0; i < dim; i++)
-					result += gr[i] * grad0[i];
-				return Point<1>{-result};*/
 
 				return Point<1>{-scalar_product(gr, grad0)};
 			}

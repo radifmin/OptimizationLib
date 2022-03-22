@@ -30,6 +30,7 @@ namespace OptLib
 			{// is average and relative tolerance met?
 				auto [avg, disp] = GuessDomain().OverallRadius();
 				PointVal<dim> var{ OverallVariation<dim>(avg, disp) };
+
 				for (int i = 0; i < dim; i++)
 				{
 					bool f = ((std::abs(avg[i]) < abs_tol) || (var[i] < rel_tol));

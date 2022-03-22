@@ -260,7 +260,7 @@ namespace OptLib
 
 		const SetOfPoints<count, point>& Simplex() const { return ItsSimplex; }
 
-		point SimplexCenter() const
+		point CenterSimplex() const
 		{ // requires vector+vector and vector/double
 			point result{ Simplex()[0] };
 			for (int i = 1; i < count; i++)
@@ -271,7 +271,7 @@ namespace OptLib
 
 		std::pair<point, point> DispersionSimplex() const
 		{// requires vector+-*vector, vector/double
-			point avg{ SimplexCenter() };
+			point avg{ CenterSimplex() };
 			point result = (Simplex()[0] - avg) * (Simplex()[0] - avg);
 
 			for (int i = 1; i < count; i++)
@@ -343,7 +343,7 @@ namespace OptLib
 
 		PointVal<dim> OverallCenter() const
 		{
-			return PointVal<dim>{std::move(this->SimplexCenter().P), MeanVal()};
+			return PointVal<dim>{std::move(this->CenterSimplex().P), MeanVal()};
 		}
 
 		std::pair< PointVal<dim>, PointVal<dim>> OverallRadius() const
@@ -366,7 +366,6 @@ namespace OptLib
 		return PointVal<dim>{ std::move(p), val };
 	}
 
-
 	template<int count, int dim>
 	class SimplexValSort : public SimplexValNoSort<count, dim>
 	{
@@ -385,21 +384,6 @@ namespace OptLib
 	namespace AuxMethods
 	{
 		/// <summary>
-		/// Euclidian norm
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		template<int dim>
-		double norm(const Point<dim>& x, const Point<dim>& y)
-		{
-			double s = 0;
-			for (int i = 0; i < dim; i++)
-				s += (x[i] - y[i]) * (x[i] - y[i]);
-			return std::sqrt(s);
-		}
-
-		/// <summary>
 		/// scalar product of two vectors
 		/// </summary>
 		/// <param name="x"></param>
@@ -413,61 +397,5 @@ namespace OptLib
 				s += x[i] * y[i];
 			return s;
 		}
-
-
-		/// <summary>
-		/// returns mean and dispersion as std::pair
-		/// </summary>
-		/// <param name="simplex"></param>
-		/// <returns></returns>
-		template <int count, int dim>
-		std::pair<Point<dim>, Point<dim>> dispersion(const SetOfPoints<count, Point<dim>>& simplex)
-		{
-			Point<dim> avg{ mean(simplex) };
-			Point<dim> result;
-
-			for (int j = 0; j < dim; j++)
-			{
-				result[j] = 0.0;
-				for (int i = 0; i < count; i++)
-				{
-					result[j] += std::pow((simplex[i][j] - avg[j]), 2.0);
-				}
-			}
-			result = result / (count + 0.0);
-			return { avg, result };
-		}
-
-		/// <summary>
-		/// variation coefficient for a set of vectors
-		/// </summary>
-		/// <param name="simplex"></param>
-		/// <returns></returns>
-		template <int dim>
-		Point<dim> var_coef( Point<dim> avg,  Point<dim> disp)
-		{
-			for (auto& r : disp)
-				r = sqrt(r);
-			for (auto& r : avg)
-				r = abs(r);
-
-			return avg / disp;
-		}
-		template <int count, int dim>
-		Point<dim> var_coef(const SetOfPoints<count, Point<dim>>& simplex)
-		{
-			auto [avg, disp] = dispersion(simplex);
-			return var_coef(avg, disp);
-		}
-
-		/// elementwise addition of vector + scalar
-		template<int dim>
-		Point<dim> operator+(RawPoint<dim> arr, double step)
-		{
-			for (auto& elem : arr.P)
-				elem += step;
-			return arr;
-		}
-
 	} // AuxMethods
 } // OptLib
