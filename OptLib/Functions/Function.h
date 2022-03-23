@@ -6,7 +6,6 @@ namespace OptLib
 {
 	namespace ConcreteFunc
 	{
-		using namespace AuxMethods;
 
 		/// <summary>
 		/// Templated paraboloid in dim-D space with gradient and hessian

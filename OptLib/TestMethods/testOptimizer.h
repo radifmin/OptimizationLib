@@ -5,14 +5,13 @@ namespace OptLib
 {
 	namespace UnitTests
 	{
-		using namespace AuxMethods;
 		class testOptimizer
 		{
 		public:
 			static void testBicection()
 			{
 				std::cout << "******Bicection test start*****\n";
-				ConcreteOptimizer::Bicection Algo{ new ConcreteFunc::FunctionWithHess{}, {{{-2}, {5}}} };
+				ConcreteOptimizer::Bisection Algo{ new ConcreteFunc::FunctionWithHess{}, {{{-2}, {5}}} };
 				std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
 				for (int i = 0; i < 10; i++)
 				{
@@ -28,7 +27,7 @@ namespace OptLib
 
 				OptimizerParams prm{ 0.001, 0.001, 101 };
 				ConcreteFunc::Function f{};
-				ConcreteOptimizer::Bicection Algo{ &f, {{{-2}, {5}}} };
+				ConcreteOptimizer::Bisection Algo{ &f, {{{-2}, {5}}} };
 				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, prm };
 
 				std::cout << "Optimization with Bicection started...\n";

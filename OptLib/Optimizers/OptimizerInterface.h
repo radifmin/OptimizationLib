@@ -16,7 +16,7 @@ namespace OptLib
 			PointVal<dim> CurrentPointAndVal() // returns the guess and the function value
 			{
 				Point<dim> p = CurrentGuess();
-				return PointVal<dim>{p, f->operator()(p)};
+				return PointVal<dim>{std::move(p), f->operator()(p)};
 			}
 
 			virtual bool IsConverged(double abs_tol, double rel_tol) const
@@ -51,17 +51,17 @@ namespace OptLib
 		/// <summary>
 		/// Direct optimization in N-dim space with simplex points sorting according to f(x)
 		/// </summary>
-		template<int dim>
-		using IDirectAlgo = ISimplexAlgo<dim, ConcreteState::StateDirect<dim>, SimplexValSort<dim + 1, dim>>;
+	//	template<int dim>
+	//	using IDirectAlgo = ISimplexAlgo<dim, ConcreteState::StateDirect<dim>, SimplexValSort<dim>>;
 
 		/// <summary>
 		/// Algorithms for 1D optimization on a segment. Segment [x1; x2], where it is guaranteed that x1 < x2
 		/// </summary>
-		class ISegmentAlgo : public ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<2, 1>>
+		class ISegmentAlgo : public ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<1>>
 		{
 		public:
 			ISegmentAlgo(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
-				ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<2, 1>>{ f_pointer, std::move(OrderPointsInSegment(setOfPoints)) } {}
+				ISimplexAlgo<1, ConcreteState::StateSegment, SimplexValNoSort<1>>{ f_pointer, std::move(OrderPointsInSegment(setOfPoints)) } {}
 		protected:
 			SetOfPoints<2, Point<1>> OrderPointsInSegment(SetOfPoints<2, Point<1>>& setOfPoints)
 			{

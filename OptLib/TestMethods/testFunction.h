@@ -5,8 +5,6 @@ namespace OptLib
 {
 	namespace UnitTests
 	{
-		using namespace AuxMethods;
-
 		class testFunction
 		{
 		public:

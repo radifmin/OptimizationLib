@@ -19,5 +19,5 @@
 #include "OptLib/States/State.h"
 
 #include "OptLib/Optimizers/OptimizerInterface.h"
-#include "OptLib/Optimizers/OneDim/Bicection.h"
+#include "OptLib/Optimizers/OneDim/Bisection.h"
 #include "OptLib/Optimizers/OverallOptimizer.h"

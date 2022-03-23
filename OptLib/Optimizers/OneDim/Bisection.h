@@ -5,23 +5,22 @@ namespace OptLib
 {
 	namespace ConcreteOptimizer
 	{
-		using namespace AuxMethods;
-		class Bicection : public OptimizerInterface::ISegmentAlgo
+		class Bisection : public OptimizerInterface::ISegmentAlgo
 		{
 			SetOfPoints<5, PointVal<1>> AuxPoints;
 		public:
-			Bicection(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
+			Bisection(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
 				OptimizerInterface::ISegmentAlgo{ f_pointer, std::move(setOfPoints) }
 			{
-				AuxPoints[0] = state.GuessDomain().Simplex()[0];
-				AuxPoints[4] = state.GuessDomain().Simplex()[1];
+				AuxPoints[0] = state.GuessDomain().Points()[0];
+				AuxPoints[4] = state.GuessDomain().Points()[1];
 
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 
-				for (int i = 1; i < 4; i++)
+				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal{ std::move(x), f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, f->operator()(x) };
 				}
 			}
 		public:
@@ -61,11 +60,7 @@ namespace OptLib
 				//	AuxPoints[4] = AuxPoints[4];
 					temp1();
 				}
-
-				SetOfPoints<2, PointVal<1>> D{ AuxPoints[0], AuxPoints.back() };
-
 				state.UpdateDomain({ AuxPoints[0], AuxPoints.back() });
-				//			state = new ConcreteState::StateSimplex<1>{new_simplex};
 				return state.Guess();
 			}
 
@@ -74,17 +69,17 @@ namespace OptLib
 			{
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 				Point<1> x{ AuxPoints[0].P[0] + step };
-				AuxPoints[1] = PointVal{ std::move(x), f->operator()(x) };
+				AuxPoints[1] = PointVal{ x, f->operator()(x) };
 				x = Point<1>{ AuxPoints[2].P[0] + step };
-				AuxPoints[3] = PointVal{ std::move(x), f->operator()(x) };
+				AuxPoints[3] = PointVal{ x, f->operator()(x) };
 			}
 			void temp2()
 			{
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
-				for (int i = 1; i < 4; i++)
+				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal{ std::move(x), f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, f->operator()(x) };
 				}
 			}
 		};

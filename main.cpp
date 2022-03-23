@@ -33,9 +33,5 @@ int main()
 
 	//testOptimizer::testOptimizer_();
 
-
-	std::array<double, 1> x{};
-	std::cout << x[0];
-
 #endif // DEBUG_LIB
 }
