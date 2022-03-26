@@ -16,6 +16,12 @@ namespace OptLib
 		std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::plus<> {});
 		return result;
 	}
+	/// elementwise subtraction of vector - value
+	Point<1> operator+ (Point<1>& p, double a )
+	{
+		p [0] += a;
+		return p;
+	}
 	/// elementwise subtraction of vector - vector
 	template<int dim>
 	Point<dim> operator-(const Point<dim>& arr1, const Point<dim>& arr2)
@@ -181,6 +187,12 @@ namespace OptLib
 	{
 		return PointVal<dim>{std::move(arr1.P + arr2.P), arr1.Val + arr2.Val};
 	}
+	/// elementwise addition of vector + value
+	Point<1> operator+ (Point<1>& p, double a )
+	{
+		p [0] += a;
+		return p;
+	}
 	/// elementwise subtraction of vector - vector
 	template<int dim>
 	PointVal<dim> operator-(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
@@ -251,7 +263,15 @@ namespace OptLib
 
 		return o;
 	}
+	template <int dim>
+	double dist(const PointVal<dim>& p1, const PointVal<dim>& p2)
+	{
+		double res = 0.0;
+		for (int i = 0; i < dim; i++)
+			res += (p2[i] - p1[i]) * (p2[i] - p1[i]);
 
+		return std::sqrt(res);
+	}
 	/// <summary>
 	/// A set of points of type point with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
 	/// </summary>
