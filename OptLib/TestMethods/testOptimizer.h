@@ -59,7 +59,7 @@ namespace OptLib
 			static void test_Grid()
 			{
 				std::cout << "******Grid test start*****\n";
-				ConcreteOptimizer::Grid<1> Algo { new ConcreteFunc::FunctionWithHess{}, {{{-15}, {25}}} , 100};
+				ConcreteOptimizer::Grid Algo { new ConcreteFunc::FunctionWithHess{}, {{{-15}, {25}}} , 100};
 				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = "<< Algo.n<<"\n";
 				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
 				std::cout << "******Grid test end*******\n\n";
