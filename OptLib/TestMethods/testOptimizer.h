@@ -56,6 +56,14 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
+			static void test_Grid()
+			{
+				std::cout << "******Grid test start*****\n";
+				ConcreteOptimizer::Grid<1> Algo { new ConcreteFunc::FunctionWithHess{}, {{{-15}, {25}}} , 100};
+				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = "<< Algo.n<<"\n";
+				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
+				std::cout << "******Grid test end*******\n\n";
+			}
 		};
 
 	} // UnitTests
