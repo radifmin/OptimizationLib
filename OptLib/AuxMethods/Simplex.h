@@ -16,7 +16,7 @@ namespace OptLib
 		std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::plus<> {});
 		return result;
 	}
-	/// elementwise subtraction of vector - value
+	/// elementwise addition of vector + value
 	Point<1> operator+ (Point<1>& p, double a )
 	{
 		p [0] += a;
@@ -188,10 +188,9 @@ namespace OptLib
 		return PointVal<dim>{std::move(arr1.P + arr2.P), arr1.Val + arr2.Val};
 	}
 	/// elementwise addition of vector + value
-	Point<1> operator+ (Point<1>& p, double a )
+	PointVal<1> operator+(PointVal<1>& p, double a)
 	{
-		p [0] += a;
-		return p;
+		return PointVal<1>{std::move(p.P + a),p.Val};
 	}
 	/// elementwise subtraction of vector - vector
 	template<int dim>

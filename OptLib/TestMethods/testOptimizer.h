@@ -56,7 +56,6 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
-
 			static void test_Grid()
 			{
 				std::cout << "******Grid test start*****\n";
