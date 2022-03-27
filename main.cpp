@@ -33,5 +33,7 @@ int main()
 
 	//testOptimizer::testOptimizer_();
 
+	// reset to previous version
+
 #endif // DEBUG_LIB
 }
