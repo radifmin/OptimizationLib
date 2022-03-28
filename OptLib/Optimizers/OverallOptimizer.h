@@ -37,7 +37,7 @@ namespace OptLib
 			Prm{ prm },
 			s{ 0 }{}
 
-		Point<dim> Optimize()
+		PointVal<dim> Optimize()
 		{
 			// TODO : separate thread
 			bool f = false;
@@ -51,7 +51,7 @@ namespace OptLib
 			return CurrentGuess();
 		}
 
-		Point<dim> Continue(double eps_x, double eps_f)
+		PointVal<dim> Continue(double eps_x, double eps_f)
 		{
 			Prm.eps_f = eps_f;
 			Prm.eps_x = eps_x;
