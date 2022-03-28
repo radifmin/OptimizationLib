@@ -21,3 +21,4 @@
 #include "OptLib/Optimizers/OptimizerInterface.h"
 #include "OptLib/Optimizers/OneDim/Bisection.h"
 #include "OptLib/Optimizers/OverallOptimizer.h"
+#include "OptLib/Optimizers/OneDim/Grid.h"

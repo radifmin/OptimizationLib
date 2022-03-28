@@ -10,7 +10,19 @@ namespace OptLib
 	};
 
 	template<int dim, typename func, typename state>
-	class Optimizer
+	class IOptimizer
+	{
+	protected:
+		OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* Algo;
+	public:
+		IOptimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* algo_pointer) :Algo{ algo_pointer } {}
+
+		virtual PointVal <dim> Optimize() = 0;
+
+	};
+
+	template<int dim, typename func, typename state>
+	class Optimizer: IOptimizer<dim,func,state>
 	{
 	public:
 		double tol_f() { return Prm.eps_f; }
@@ -21,11 +33,11 @@ namespace OptLib
 
 	public:
 		Optimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* algo_pointer, OptimizerParams prm) :
+			IOptimizer(algo_pointer),
 			Prm{ prm },
-			s{ 0 },
-			Algo{ algo_pointer }{	}
+			s{ 0 }{}
 
-		Point<dim> Optimize()
+		PointVal<dim> Optimize()
 		{
 			// TODO : separate thread
 			bool f = false;
@@ -39,7 +51,7 @@ namespace OptLib
 			return CurrentGuess();
 		}
 
-		Point<dim> Continue(double eps_x, double eps_f)
+		PointVal<dim> Continue(double eps_x, double eps_f)
 		{
 			Prm.eps_f = eps_f;
 			Prm.eps_x = eps_x;
@@ -47,8 +59,29 @@ namespace OptLib
 		}
 
 	protected:
-		OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* Algo;
 		int s; // current number of iterations
 		OptimizerParams Prm;
+	};
+	template<int dim,typename func, typename state>
+	class Optimizer1Step: IOptimizer<dim, func, state>
+	{
+	protected:
+		PointVal<dim> res;
+		bool f = false;
+	public:
+		Optimizer1Step(OptimizerInterface::IOptimizerAlgorithm<dim, func, state>* algo_pointer) :
+			IOptimizer(algo_pointer){}
+		virtual PointVal<dim> Optimize() override 
+		{
+			if (f)
+			{
+				return res;
+			}
+			else
+			{
+				f = true;
+				return Algo->Proceed();
+			}
+		}
 	};
 } // OptLib
