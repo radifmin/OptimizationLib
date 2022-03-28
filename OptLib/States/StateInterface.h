@@ -8,7 +8,7 @@ namespace OptLib
 		/// <summary>
 		/// defines abstract basic functions, which are common for every type of state
 		/// </summary>
-		template<int dim>
+		template<size_t dim>
 		class IState
 		{
 		protected:
@@ -22,7 +22,7 @@ namespace OptLib
 		/// <summary>
 		/// State for methods of optimization in dim-dimensional space based on simplexes
 		/// </summary>
-		template<int dim, typename simplex>
+		template<size_t dim, typename simplex>
 		class IStateSimplex : public StateInterface::IState<dim>
 		{
 		public: // overriden from predecessor

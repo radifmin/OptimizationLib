@@ -9,7 +9,7 @@ namespace OptLib
 		int max_iter;
 	};
 
-	template<int dim, typename func, typename state>
+	template<size_t dim, typename func, typename state>
 	class IOptimizer
 	{
 	protected:
@@ -21,7 +21,7 @@ namespace OptLib
 
 	};
 
-	template<int dim, typename func, typename state>
+	template<size_t dim, typename func, typename state>
 	class Optimizer: IOptimizer<dim,func,state>
 	{
 	public:
@@ -62,7 +62,7 @@ namespace OptLib
 		int s; // current number of iterations
 		OptimizerParams Prm;
 	};
-	template<int dim,typename func, typename state>
+	template<size_t dim,typename func, typename state>
 	class Optimizer1Step: IOptimizer<dim, func, state>
 	{
 	protected:

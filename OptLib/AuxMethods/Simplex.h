@@ -3,17 +3,46 @@
 
 namespace OptLib
 {
+	// https://docs.microsoft.com/ru-ru/cpp/parallel/auto-parallelization-and-auto-vectorization?view=msvc-170
+	// https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX&cats=Store&ig_expand=6846,6917
+	// https://habr.com/ru/company/intel/blog/205552/
+	// https://chryswoods.com/vector_c++/immintrin.html
+
 	/// <summary>
 	/// An alias for std::array. It is required for the ease of RawPoint construction.
 	/// </summary>
-	template<int dim>
+	template<size_t dim>
 	using Point = std::array<double, dim>;
 	/// elementwise addition of vector + vector
-	template<int dim>
+	template<size_t dim>
 	Point<dim> operator+(const Point<dim>& arr1, const Point<dim>& arr2)
 	{
-		std::array<double, dim> result;
-		std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::plus<> {});
+		Point<dim> result{};
+
+		__m256d x;
+		__m256d y;
+
+		constexpr size_t rg_size = 256/8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+
+			x = _mm256_add_pd(x, y);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr1[i] + arr2[i];
+		}
+		
+	//	std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::plus<> {});
 		return result;
 	}
 	/// elementwise addition of vector + value
@@ -23,66 +52,231 @@ namespace OptLib
 		return p;
 	}
 	/// elementwise subtraction of vector - vector
-	template<int dim>
+	template<size_t dim>
 	Point<dim> operator-(const Point<dim>& arr1, const Point<dim>& arr2)
 	{
-		std::array<double, dim> result;
-		std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::minus<> {});
+		Point<dim> result{};
+
+		__m256d x;
+		__m256d y;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+
+			x = _mm256_sub_pd(x, y);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr1[i] - arr2[i];
+		}
+
+	//	std::transform(arr1.begin(), arr1.end(), arr2.begin(), result.begin(), std::minus<> {});
 		return result;
 	}
 	/// elementwise division vector / scalar
-	template<int dim>
-	Point<dim> operator/(Point<dim> arr, double val)
-	{
-		for (auto& elem : arr)
-			elem /= val;
-		return arr;
-	}
-	/// elementwise division of vector / vector
-	template<int dim>
-	Point<dim> operator/(const Point<dim>& arr1, const Point<dim>& arr2)
+	template<size_t dim>
+	Point<dim> operator/(const Point<dim>& arr, double val)
 	{
 		Point<dim> result;
-		std::transform(arr1.begin(), arr1.end(),
-			arr2.begin(), result.begin(), [](double x, double y) {return x / y; });
+		__m256d Val = _mm256_set1_pd(val);
+		__m256d x;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+
+			x = _mm256_div_pd(x, Val);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr[i] / val;
+		}
+
+
+	//	for (auto& elem : arr)
+	//		elem /= val;
+		return result;
+	}
+	/// elementwise division of vector / vector
+	template<size_t dim>
+	Point<dim> operator/(const Point<dim>& arr1, const Point<dim>& arr2)
+	{
+		Point<dim> result{};
+
+		__m256d x;
+		__m256d y;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+
+			x = _mm256_div_pd(x, y);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr1[i] / arr2[i];
+		}
+
+//		std::transform(arr1.begin(), arr1.end(),
+//			arr2.begin(), result.begin(), [](double x, double y) {return x / y; });
 		return result;
 	}
 	/// elementwise multiplication of vector * vector
-	template<int dim>
+	template<size_t dim>
 	Point<dim> operator*(const Point<dim>& arr1, const Point<dim>& arr2)
 	{
-		Point<dim> result;
-		std::transform(arr1.begin(), arr1.end(),
-			arr2.begin(), result.begin(), [](double x, double y) {return x * y; });
+		Point<dim> result{};
+
+		__m256d x;
+		__m256d y;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+
+			x = _mm256_mul_pd(x, y);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr1[i] * arr2[i];
+		}
+
+	//	std::transform(arr1.begin(), arr1.end(),
+	//		arr2.begin(), result.begin(), [](double x, double y) {return x * y; });
 
 		return result;
 	}
 	/// elementwise multiplication of vector * scalar
-	template<int dim>
-	Point<dim> operator*(Point<dim> arr, double val)
+	template<size_t dim>
+	Point<dim> operator*(const Point<dim>& arr, double val)
 	{
-		for (auto& elem : arr)
-			elem *= val;
-		return arr;
+		Point<dim> result;
+		__m256d Val = _mm256_set1_pd(val);
+		__m256d x;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+
+			x = _mm256_mul_pd(x, Val);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = arr[i] * val;
+		}
+
+	//	for (auto& elem : arr)
+	//		elem *= val;
+		return result;
+	}
+	template<size_t dim>
+	Point<dim> operator*(double val, const Point<dim>& arr)
+	{
+		return arr * val;
 	}
 	/// elementwise sqrt bbb
-	template<int dim>
-	Point<dim> sqrt(Point<dim> arr)
+	template<size_t dim>
+	Point<dim> sqrt(const Point<dim>& arr)
 	{
-		for (auto& elem : arr)
-			elem = std::sqrt(elem);
-		return arr;
+		Point<dim> result;
+		__m256d x;
+
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+			x = _mm256_sqrt_pd(x);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = std::sqrt(arr[i]);
+		}
+
+	//	for (auto& elem : arr)
+	//		elem = std::sqrt(elem);
+		return result;
 	}
 	/// elementwise abs
-	template<int dim>
-	Point<dim> abs(Point<dim> arr)
+	template<size_t dim>
+	Point<dim> abs(const Point<dim>& arr)
 	{
-		for (auto& elem : arr)
-			elem = std::abs(elem);
-		return arr;
+		Point<dim> result;
+		__m256d x;
+		const __m256d signmask = _mm256_set1_pd(-0.0f); // 0x80000000
+		constexpr size_t rg_size = 256 / 8 / sizeof(double);
+		constexpr size_t itr = dim / rg_size;
+
+		for (size_t i = 0; i < itr; i++)
+		{
+			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+			x = _mm256_andnot_pd(signmask, x);
+
+			_mm256_storeu_pd(result.data() + i * rg_size, x);
+		}
+
+		if constexpr (dim % rg_size != 0)
+		{
+			for (int i = itr * rg_size; i < dim; i++)
+				result[i] = std::abs(arr[i]);
+		}
+
+	//	for (auto& elem : arr)
+	//		elem = std::abs(elem);
+		return result;
 	}
 	/// scalar product of two vectors
-	template <int dim>
+	template <size_t dim>
 	double scalar_product(const Point<dim>& x, const Point<dim>& y)
 	{
 		double s = 0;
@@ -90,7 +284,7 @@ namespace OptLib
 			s += x[i] * y[i];
 		return s;
 	}
-	template<int dim>
+	template<size_t dim>
 	std::ostream& operator<< (std::ostream& o, const Point<dim>& output)
 	{
 		o << "{ " << output[0];
@@ -111,7 +305,7 @@ namespace OptLib
 	/// <summary>
 	/// Envelope for the Point<dim>
 	/// </summary>
-	template<int dim>
+	template<size_t dim>
 	struct RawPoint
 	{
 		RawPoint() = default;
@@ -124,42 +318,42 @@ namespace OptLib
 		operator Point<dim>() { return P; }
 	};
 	///// elementwise addition of vector + vector
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator+(const RawPoint<dim>& arr1, const RawPoint<dim>& arr2)
 	//{
 	//	return RawPoint<dim>{std::move(arr1.P+arr2.P)};
 	//}
 	///// elementwise subtraction of vector - vector
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator-(const RawPoint<dim>& arr1, const RawPoint<dim>& arr2)
 	//{
 	//	return RawPoint<dim>{std::move(arr1.P-arr2.P)};
 	//}
 	///// elementwise division vector / scalar
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator/(RawPoint<dim> arr, double val)
 	//{
 	//	return RawPoint{ stq::move(arr.P / val) };
 	//}
 	///// elementwise division of vector / vector
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator/(const RawPoint<dim>& arr1, const RawPoint<dim>& arr2)
 	//{
 	//	return RawPoint<dim>{std::move(arr1.P / arr2.P)};
 	//}
 	///// elementwise multiplication of vector * vector
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator*(const RawPoint<dim>& arr1, const RawPoint<dim>& arr2)
 	//{
 	//	return RawPoint<dim>{std::move(arr1.P* arr2.P)};
 	//}
 	///// elementwise multiplication of vector * scalar
-	//template<int dim>
+	//template<size_t dim>
 	//RawPoint<dim> operator*(RawPoint<dim> arr, double val)
 	//{
 	//	return RawPoint<dim>{arr.P* val};
 	//}
-	template<int dim>
+	template<size_t dim>
 	std::ostream& operator<<(std::ostream& o, const RawPoint<dim>& r)
 	{
 		o << r.P; return o;
@@ -169,7 +363,7 @@ namespace OptLib
 	/// <summary>
 	/// Point with associated Value. Essentially a {Point, Val}-pair with a comparator to sort Points
 	/// </summary>
-	template<int dim>
+	template<size_t dim>
 	struct PointVal : public RawPoint<dim>
 	{
 		double Val;
@@ -182,7 +376,7 @@ namespace OptLib
 		}
 	};
 	/// elementwise addition of vector + vector
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> operator+(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
 	{
 		return PointVal<dim>{std::move(arr1.P + arr2.P), arr1.Val + arr2.Val};
@@ -193,42 +387,42 @@ namespace OptLib
 		return PointVal<1>{std::move(p.P + a),p.Val};
 	}
 	/// elementwise subtraction of vector - vector
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> operator-(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
 	{
 		return PointVal<dim>{std::move(arr1.P - arr2.P), arr1.Val - arr2.Val};
 	}
 	/// elementwise division vector / scalar
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> operator/(PointVal<dim> arr, double val)
 	{
 		return PointVal<dim>{ std::move(arr.P / val), arr.Val / val };
 	}
 	/// elementwise multiplication of vector * vector
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> operator*(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
 	{
 		return PointVal<dim>{std::move(arr1.P* arr2.P), arr1.Val* arr2.Val};
 	}
 	/// elementwise division of vector * vector
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> operator/(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
 	{
 		return PointVal<dim>{std::move(arr1.P/ arr2.P), arr1.Val/ arr2.Val};
 	}
 	///  elementwise sqrt nnn
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> sqrt(const PointVal<dim>& p)
 	{
 		return PointVal<dim>{ sqrt<dim>(p.P), std::sqrt(p.Val) };
 	}
 	///  elementwise abs
-	template<int dim>
+	template<size_t dim>
 	PointVal<dim> abs(const PointVal<dim>& p)
 	{
 		return PointVal<dim>{ abs<dim>(p.P), std::abs(p.Val) };
 	}
-	template<int dim>
+	template<size_t dim>
 	std::ostream& operator<<(std::ostream& o, const PointVal<dim>& r)
 	{
 		o << "{ " << r.P << ' ' << r.Val << " }"; return o;
@@ -247,9 +441,9 @@ namespace OptLib
 		return abs(avg) / sqrt(disp);
 	}
 
-	template<int count, typename point>
+	template<size_t count, typename point>
 	using SetOfPoints = std::array<point, count>;
-	template<int count, typename point>
+	template<size_t count, typename point>
 	std::ostream& operator<< (std::ostream& o, const SetOfPoints<count, point>& output)
 	{
 		o << "{ " << output[0];
@@ -262,7 +456,7 @@ namespace OptLib
 
 		return o;
 	}
-	template <int dim>
+	template <size_t dim>
 	double dist(const PointVal<dim>& p1, const PointVal<dim>& p2)
 	{
 		double res = 0.0;
@@ -275,7 +469,7 @@ namespace OptLib
 	/// A set of points of type point with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
 	/// </summary>
 	/// <typeparam name="point"></typeparam>
-	template<int count, typename point>
+	template<size_t count, typename point>
 	class RawSetOfPoints
 	{
 	protected:
@@ -308,7 +502,7 @@ namespace OptLib
 
 		operator SetOfPoints<count, point>() { return Points(); }
 	};
-	template<int count, typename point>
+	template<size_t count, typename point>
 	std::ostream& operator<< (std::ostream& o, const RawSetOfPoints<count, point>& output)
 	{
 		o << "{ " << output[0];
@@ -323,7 +517,7 @@ namespace OptLib
 	/// A set of points of type {point with Val} with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
 	/// </summary>
 	/// <typeparam name="point"></typeparam>
-	template<int count, typename point, typename pointval>
+	template<size_t count, typename point, typename pointval>
 	class SetOfPointValsSort : public RawSetOfPoints<count, pointval>
 	{
 	private:
@@ -347,9 +541,9 @@ namespace OptLib
 
 	using Segment = RawSetOfPoints<2, PointVal<1>>;
 
-	template<int dim>
+	template<size_t dim>
 	using SimplexValNoSort = RawSetOfPoints<dim + 1, PointVal<dim>>;
 
-	template<int dim>
+	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
 } // OptLib

@@ -1,16 +1,14 @@
 #pragma once
 #include "stdafx.h"
 
-
 namespace OptLib
 {
 	namespace ConcreteFunc
 	{
-
 		/// <summary>
 		/// Templated paraboloid in dim-D space with gradient and hessian
 		/// </summary>
-		template<int dim>
+		template<size_t dim>
 		class Paraboloid : public FuncInterface::IFuncWithHess<dim>
 		{
 		protected:
@@ -149,7 +147,7 @@ namespace OptLib
 
 
 
-		template <int dim>
+		template <size_t dim>
 		class FuncAlongGradDirection : public FuncInterface::IFuncWithGrad<1>
 		{
 		public:

@@ -5,32 +5,33 @@ namespace OptLib
 {
 	namespace FuncInterface
 	{
-		template <int dim>
+		template <size_t dim>
 		class IFunc
 		{ // direct methods only call the function calculation
 		public:
 			virtual double operator () (const Point<dim>& x) const = 0;
 		};
 
-		template <int dim>
+		template <size_t dim>
 		class IGrad
 		{
 		public:
 			virtual Point<dim> grad(const Point<dim>& x) const = 0;
 		};
 
-		template <int dim>
+		template <size_t dim>
 		class IHess
 		{
 		public:
+			// each Point<dim> is a row of the Hessian matrix
 			virtual SetOfPoints<dim, Point<dim>> hess(const Point<dim>& x) const = 0;
 		};
 
-		template <int dim>
+		template <size_t dim>
 		class IFuncWithGrad :public IFunc<dim>, public IGrad<dim>
 		{ }; // 1st order optimization methods require the function itself and the gradient
 
-		template <int dim>
+		template <size_t dim>
 		class IFuncWithHess :public IFuncWithGrad<dim>, public IHess<dim>
 		{ }; // 2nd order methods --- function, gradient, and hessian
 

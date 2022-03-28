@@ -5,7 +5,7 @@ namespace OptLib
 {
 	namespace OptimizerInterface
 	{
-		template<int dim, typename func, typename stateT>
+		template<size_t dim, typename func, typename stateT>
 		class IOptimizerAlgorithm
 		{
 		public:
@@ -35,7 +35,7 @@ namespace OptLib
 		/// Optimization using simplex methods in N-dim space. Common interface for Direct and 1D segment optimization methods.
 		/// state must implement GuessDomain method
 		/// </summary>
-		template<int dim, typename stateT, typename simplex>
+		template<size_t dim, typename stateT, typename simplex>
 		class ISimplexAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>
 		{
 		public:
@@ -51,7 +51,7 @@ namespace OptLib
 		/// <summary>
 		/// Direct optimization in N-dim space with simplex points sorting according to f(x)
 		/// </summary>
-	//	template<int dim>
+	//	template<size_t dim>
 	//	using IDirectAlgo = ISimplexAlgo<dim, ConcreteState::StateDirect<dim>, SimplexValSort<dim>>;
 
 		/// <summary>
@@ -71,19 +71,19 @@ namespace OptLib
 			}
 		};
 
-		template<int dim>
+		template<size_t dim>
 		class IGradAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFuncWithGrad<dim>, ConcreteState::StatePoint<dim>>
 		{
 
 		};
 
-		template<int dim>
+		template<size_t dim>
 		class IHessAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFuncWithHess<dim>, ConcreteState::StatePoint<dim>>
 		{
 
 		};
 
-		template<int dim>
+		template<size_t dim>
 		class IStochasticAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFuncWithHess<dim>, ConcreteState::StateStochastic<dim>>
 		{
 

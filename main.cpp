@@ -11,6 +11,7 @@ int main()
 {
 #ifdef DEBUG_LIB
 	// test Simplex
+	OptLib::UnitTests::testSimplex::testPointOperations();
 	OptLib::UnitTests::testSimplex::testSimplexVal();
 	
 	// test functions

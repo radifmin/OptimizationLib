@@ -8,7 +8,7 @@ namespace OptLib
 		/// <summary>
 		/// Direct methods require sorted simplex points with respect to f(x)
 		/// </summary>
-		template<int dim>
+		template<size_t dim>
 		using StateDirect =  StateInterface::IStateSimplex<dim, SimplexValSort<dim>>;
 
 		/// <summary>
@@ -19,7 +19,7 @@ namespace OptLib
 		/// <summary>
 		/// First and second order methods require only a point rather than entire simplex for optimization
 		/// </summary>
-		template<int dim>
+		template<size_t dim>
 		class StatePoint : public StateInterface::IState<dim>
 		{
 
@@ -28,7 +28,7 @@ namespace OptLib
 		/// <summary>
 		/// Stochastic methods require multiple initial points
 		/// </summary>
-		template<int dim>
+		template<size_t dim>
 		class StateStochastic : public StateInterface::IState<dim>
 		{
 
