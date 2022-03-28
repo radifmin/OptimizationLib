@@ -31,6 +31,7 @@ int main()
 	OptLib::UnitTests::testOptimizer::testBicection();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithBicection(); 
 	OptLib::UnitTests::testOptimizer::test_Grid();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithGrid();
 	//testOptimizer::testOptimizer_();
 
 #endif // DEBUG_LIB
