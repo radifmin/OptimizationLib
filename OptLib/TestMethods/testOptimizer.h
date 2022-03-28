@@ -64,6 +64,19 @@ namespace OptLib
 				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
 				std::cout << "******Grid test end*******\n\n";
 			}
+			static void testOverallOptimizer_WithGrid()
+			{
+				std::cout << "******OverallOptimizer With Grid test start*****\n";
+
+				ConcreteFunc::Function f{};
+				ConcreteOptimizer::Grid Algo{ &f, {{{-15}, {25}}} ,5};
+				Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo};
+
+				std::cout << "Optimization with Grid started...\n";
+				std::cout << "Optimization with Grid finalized.\n";
+				std::cout << "Final guess is x = " <<  opt.Optimize() << '\n';
+				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
+			}
 		};
 
 	} // UnitTests
