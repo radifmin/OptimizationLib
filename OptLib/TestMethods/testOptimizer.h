@@ -56,6 +56,27 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
+			static void test_Grid()
+			{
+				std::cout << "******Grid test start*****\n";
+				ConcreteOptimizer::Grid Algo { new ConcreteFunc::FunctionWithHess{}, {{{-15}, {25}}} , 100};
+				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = "<< Algo.n<<"\n";
+				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
+				std::cout << "******Grid test end*******\n\n";
+			}
+			static void testOverallOptimizer_WithGrid()
+			{
+				std::cout << "******OverallOptimizer With Grid test start*****\n";
+
+				ConcreteFunc::Function f{};
+				ConcreteOptimizer::Grid Algo{ &f, {{{-15}, {25}}} ,5};
+				Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo};
+
+				std::cout << "Optimization with Grid started...\n";
+				std::cout << "Optimization with Grid finalized.\n";
+				std::cout << "Final guess is x = " <<  opt.Optimize() << '\n';
+				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
+			}
 		};
 
 	} // UnitTests
