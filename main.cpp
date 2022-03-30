@@ -30,9 +30,9 @@ int main()
 
 	// test optimizers
 	OptLib::UnitTests::testOptimizer::testBicection();
-	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithBicection(); 
-	OptLib::UnitTests::testOptimizer::test_Grid();
-	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithGrid();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithBicection(); 
+	OptLib::UnitTests::testOptimizer::testGrid();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	//testOptimizer::testOptimizer_();
 
 	// reset to previous version

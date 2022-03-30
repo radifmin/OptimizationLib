@@ -21,7 +21,7 @@ namespace OptLib
 				std::cout << "******Bicection test end*******\n\n";
 			}
 
-			static void testOverallOptimizer_WithBicection()
+			static void testOverallOptimizerWithBicection()
 			{
 				std::cout << "******OverallOptimizer With Bicection test start*****\n";
 
@@ -56,7 +56,7 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
-			static void test_Grid()
+			static void testGrid()
 			{
 				std::cout << "******Grid test start*****\n";
 				ConcreteOptimizer::Grid Algo { new ConcreteFunc::FunctionWithHess{}, {{{-15}, {25}}} , 100};
@@ -64,7 +64,7 @@ namespace OptLib
 				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
 				std::cout << "******Grid test end*******\n\n";
 			}
-			static void testOverallOptimizer_WithGrid()
+			static void testOverallOptimizerWithGrid()
 			{
 				std::cout << "******OverallOptimizer With Grid test start*****\n";
 

@@ -424,6 +424,21 @@ namespace OptLib
 	{
 		return PointVal<dim>{ abs<dim>(p.P), std::abs(p.Val) };
 	}
+	/// <summary>
+	/// Distance between two points
+	/// </summary>
+	/// <param name="p1"></param>
+	/// <param name="p2"></param>
+	/// <returns></returns>
+	template <size_t dim>
+	double dist(const PointVal<dim>& p1, const PointVal<dim>& p2)
+	{
+		double res = 0.0;
+		for (int i = 0; i < dim; i++)
+			res += (p2[i] - p1[i]) * (p2[i] - p1[i]);
+
+		return std::sqrt(res);
+	}
 	template<size_t dim>
 	std::ostream& operator<<(std::ostream& o, const PointVal<dim>& r)
 	{
@@ -458,15 +473,7 @@ namespace OptLib
 
 		return o;
 	}
-	template <size_t dim>
-	double dist(const PointVal<dim>& p1, const PointVal<dim>& p2)
-	{
-		double res = 0.0;
-		for (int i = 0; i < dim; i++)
-			res += (p2[i] - p1[i]) * (p2[i] - p1[i]);
 
-		return std::sqrt(res);
-	}
 
 	/// <summary>
 	/// A set of points of type point with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
