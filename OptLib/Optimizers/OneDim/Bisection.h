@@ -12,8 +12,8 @@ namespace OptLib
 			Bisection(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
 				OptimizerInterface::ISegmentAlgo{ f_pointer, std::move(setOfPoints) }
 			{
-				AuxPoints[0] = state.GuessDomain().Points()[0];
-				AuxPoints[4] = state.GuessDomain().Points()[1];
+				AuxPoints[0] = State.GuessDomain().Points()[0];
+				AuxPoints[4] = State.GuessDomain().Points()[1];
 
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 
@@ -60,8 +60,8 @@ namespace OptLib
 				//	AuxPoints[4] = AuxPoints[4];
 					temp1();
 				}
-				state.UpdateDomain({ AuxPoints[0], AuxPoints.back() });
-				return state.Guess();
+				State.UpdateDomain({ AuxPoints[0], AuxPoints.back() });
+				return State.Guess();
 			}
 
 		protected:

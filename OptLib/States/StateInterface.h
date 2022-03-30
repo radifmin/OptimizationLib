@@ -40,14 +40,14 @@ namespace OptLib
 			}
 		protected:
 			simplex ItsGuessDomain; // unique for direct optimization methods
-			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& state, FuncInterface::IFunc<dim>* f)
+			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, FuncInterface::IFunc<dim>* f)
 			{
 				std::array<double, dim + 1> funcVals;
 				for (int i = 0; i < dim + 1; i++)
-					funcVals[i] = f->operator()(state[i]);
+					funcVals[i] = f->operator()(State[i]);
 				return funcVals;
 			}
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& state, std::array<double, dim + 1>&& funcVals)
+			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
 				// TODO : This line does not compile
 //				ItsGuessDomain = simplex{ std::move(state), std::move(funcVals)};
@@ -56,19 +56,19 @@ namespace OptLib
 				// combine Points and Vals together
 				SetOfPoints<dim + 1, PointVal<dim>> stateVals{};
 				for (size_t i = 0; i < dim + 1; i++)
-					stateVals[i] = PointVal<dim>{state[i], funcVals[i]};
+					stateVals[i] = PointVal<dim>{State[i], funcVals[i]};
 
 				UpdateDomain(std::move(stateVals));
 			}
 		public:
-			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& state, FuncInterface::IFunc<dim>* f)
+			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(state), f);
+				SetDomain(std::move(State), f);
 			}
 			const simplex& GuessDomain() const { return ItsGuessDomain; } // unique for direct optimization methods
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& state, FuncInterface::IFunc<dim>* f)
+			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(state), std::move(FuncVals(state, f)));
+				SetDomain(std::move(State), std::move(FuncVals(State, f)));
 			}
 
 			void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)

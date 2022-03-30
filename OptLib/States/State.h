@@ -12,7 +12,7 @@ namespace OptLib
 		using StateDirect =  StateInterface::IStateSimplex<dim, SimplexValSort<dim>>;
 
 		/// <summary>
-		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x)
+		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x). Must be sorted with respect to x == x[0]
 		/// </summary>
 		using StateSegment = StateInterface::IStateSimplex<1, SimplexValNoSort<1>>;
 

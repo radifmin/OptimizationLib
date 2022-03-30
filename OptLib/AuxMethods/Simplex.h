@@ -467,6 +467,7 @@ namespace OptLib
 
 		return std::sqrt(res);
 	}
+
 	/// <summary>
 	/// A set of points of type point with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
 	/// </summary>
@@ -548,4 +549,9 @@ namespace OptLib
 
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
+
+
+//	template<size_t count, template<size_t> class point, size_t dim>
+//	class tratata {};
+
 } // OptLib
