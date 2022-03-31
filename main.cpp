@@ -9,9 +9,6 @@
 
 int main()
 {
-
-	// This is to test revert
-
 #ifdef DEBUG_LIB
 	// test Simplex
 	OptLib::UnitTests::testSimplex::testPointOperations();
