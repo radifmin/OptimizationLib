@@ -59,7 +59,7 @@ namespace OptLib
 			{
 				Point<dim> result{};
 				for (int i = 0; i < dim; i++)
-					result[i] = 2*dot_product(x, CoefMatrixRow(i));
+					result[i] = 2*scalar_product(x, CoefMatrixRow(i));
 				return result;
 			}
 
@@ -163,7 +163,7 @@ namespace OptLib
 			{
 				Point<dim> gr = f->grad(x0 - grad0 * gamma[0]);
 
-				return Point<1>{-dot_product(gr, grad0)};
+				return Point<1>{-scalar_product(gr, grad0)};
 			}
 
 		protected:

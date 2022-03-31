@@ -253,7 +253,7 @@ namespace OptLib
 	{
 		Point<dim> result;
 		__m256d x;
-		static const __m256d signmask = _mm256_set1_pd(-0.0f); // 0x80000000
+		const __m256d signmask = _mm256_set1_pd(-0.0f); // 0x80000000
 		constexpr size_t rg_size = 256 / 8 / sizeof(double);
 		constexpr size_t itr = dim / rg_size;
 
@@ -277,13 +277,11 @@ namespace OptLib
 	}
 	/// scalar product of two vectors
 	template <size_t dim>
-	double dot_product(const Point<dim>& x, const Point<dim>& y)
+	double scalar_product(const Point<dim>& x, const Point<dim>& y)
 	{
-		auto z = x * y;
-
 		double s = 0;
 		for (int i = 0; i < dim; i++)
-			s += z[i];
+			s += x[i] * y[i];
 		return s;
 	}
 	template<size_t dim>
