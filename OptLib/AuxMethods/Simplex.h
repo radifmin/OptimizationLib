@@ -555,11 +555,12 @@ namespace OptLib
 			SetOfPointVal<count, point, pointval>{ std::move(_s), std::move(funcVals) } {this->Sort(); }
 	};
 
-	using Segment = SetOfPointVal<2, Point<1>, PointVal<1>>;
 
 	template<size_t dim>
 	using SimplexValNoSort = SetOfPointVal<dim + 1, Point<dim>, PointVal<dim>>;
 
+	using Segment = SimplexValNoSort<1>;
+	
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
 
