@@ -49,7 +49,6 @@ namespace OptLib
 			}
 			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
-				// TODO : This line does not compile
 				ItsGuessDomain = simplex{ std::move(State), std::move(funcVals)};
 				ItsGuess = GuessDomain().Mean();
 			}
