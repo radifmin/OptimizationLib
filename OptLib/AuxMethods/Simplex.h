@@ -579,8 +579,4 @@ namespace OptLib
 	
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
-
-//	template<size_t count, template<size_t> class point, size_t dim>
-//	class tratata {};
-
 } // OptLib
