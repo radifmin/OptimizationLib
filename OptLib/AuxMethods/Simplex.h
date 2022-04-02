@@ -23,17 +23,19 @@ namespace OptLib
 		__m256d y;
 
 		constexpr size_t rg_size = 256/8 / sizeof(double);
-
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
-			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+				y = _mm256_loadu_pd(arr2.data() + i * rg_size);
 
-			x = _mm256_add_pd(x, y);
+				x = _mm256_add_pd(x, y);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -64,14 +66,17 @@ namespace OptLib
 
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
-			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+				y = _mm256_loadu_pd(arr2.data() + i * rg_size);
 
-			x = _mm256_sub_pd(x, y);
+				x = _mm256_sub_pd(x, y);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -95,13 +100,16 @@ namespace OptLib
 
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr.data() + i * rg_size);
 
-			x = _mm256_div_pd(x, Val);
+				x = _mm256_div_pd(x, Val);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -128,14 +136,17 @@ namespace OptLib
 
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
-			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+				y = _mm256_loadu_pd(arr2.data() + i * rg_size);
 
-			x = _mm256_div_pd(x, y);
+				x = _mm256_div_pd(x, y);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -160,14 +171,17 @@ namespace OptLib
 		constexpr size_t rg_size = 256 / 8 / sizeof(double);
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr1.data() + i * rg_size);
-			y = _mm256_loadu_pd(arr2.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr1.data() + i * rg_size);
+				y = _mm256_loadu_pd(arr2.data() + i * rg_size);
 
-			x = _mm256_mul_pd(x, y);
+				x = _mm256_mul_pd(x, y);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -225,12 +239,15 @@ namespace OptLib
 
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr.data() + i * rg_size);
-			x = _mm256_sqrt_pd(x);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr.data() + i * rg_size);
+				x = _mm256_sqrt_pd(x);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)
@@ -555,7 +572,6 @@ namespace OptLib
 			SetOfPointVal<count, point, pointval>{ std::move(_s), std::move(funcVals) } {this->Sort(); }
 	};
 
-
 	template<size_t dim>
 	using SimplexValNoSort = SetOfPointVal<dim + 1, Point<dim>, PointVal<dim>>;
 
@@ -563,7 +579,6 @@ namespace OptLib
 	
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
-
 
 //	template<size_t count, template<size_t> class point, size_t dim>
 //	class tratata {};
