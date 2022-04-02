@@ -50,15 +50,8 @@ namespace OptLib
 			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
 				// TODO : This line does not compile
-//				ItsGuessDomain = simplex{ std::move(state), std::move(funcVals)};
-				
-				
-				// combine Points and Vals together
-				SetOfPoints<dim + 1, PointVal<dim>> stateVals{};
-				for (size_t i = 0; i < dim + 1; i++)
-					stateVals[i] = PointVal<dim>{State[i], funcVals[i]};
-
-				UpdateDomain(std::move(stateVals));
+				ItsGuessDomain = simplex{ std::move(State), std::move(funcVals)};
+				ItsGuess = GuessDomain().Mean();
 			}
 		public:
 			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
