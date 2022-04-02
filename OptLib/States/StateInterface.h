@@ -42,10 +42,7 @@ namespace OptLib
 			simplex ItsGuessDomain; // unique for direct optimization methods
 			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, FuncInterface::IFunc<dim>* f)
 			{
-				std::array<double, dim + 1> funcVals;
-				for (int i = 0; i < dim + 1; i++)
-					funcVals[i] = f->operator()(State[i]);
-				return funcVals;
+				return f->operator()(State);
 			}
 			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{

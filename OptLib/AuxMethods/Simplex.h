@@ -207,13 +207,16 @@ namespace OptLib
 
 		constexpr size_t itr = dim / rg_size;
 
-		for (size_t i = 0; i < itr; i++)
+		if constexpr (itr > 0)
 		{
-			x = _mm256_loadu_pd(arr.data() + i * rg_size);
+			for (size_t i = 0; i < itr; i++)
+			{
+				x = _mm256_loadu_pd(arr.data() + i * rg_size);
 
-			x = _mm256_mul_pd(x, Val);
+				x = _mm256_mul_pd(x, Val);
 
-			_mm256_storeu_pd(result.data() + i * rg_size, x);
+				_mm256_storeu_pd(result.data() + i * rg_size, x);
+			}
 		}
 
 		if constexpr (dim % rg_size != 0)

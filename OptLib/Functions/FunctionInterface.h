@@ -10,6 +10,14 @@ namespace OptLib
 		{ // direct methods only call the function calculation
 		public:
 			virtual double operator () (const Point<dim>& x) const = 0;
+			template<size_t count>
+			std::array<double, count> operator () (const SetOfPoints<count, Point<dim>>& x)
+			{
+				std::array<double, count> out;
+				for (int i = 0; i < count; i++)
+					out[i] = this->operator()(x[i]);
+				return out;
+			}
 		};
 
 		template <size_t dim>
