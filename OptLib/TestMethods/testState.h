@@ -33,13 +33,13 @@ namespace OptLib
 
 				ConcreteFunc::Function f{};
 
-				ConcreteState::StateSegment State{ {{{0.0},{1.0}}} , &f };
+				ConcreteState::StateSegment State{ {0.0,1.0} , &f };
 				std::cout << "The state simplex is     " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 
 			//	SetOfPoints<2, Point<1>> ss{ { {-1.5},{2.0} } };
 				
-				State.SetDomain({ { {-7},{2.0} } }, &f);
+				State.SetDomain({ -7,2.0 }, &f);
 				std::cout << "The new state simplex is " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 
