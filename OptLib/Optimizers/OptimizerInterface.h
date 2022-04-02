@@ -31,22 +31,6 @@ namespace OptLib
 			state State; // state of the method
 		};
 
-		/// <summary>
-		/// Optimization using simplex methods in N-dim space. Common interface for Direct and 1D segment optimization methods.
-		/// state must implement GuessDomain method
-		/// </summary>
-		//template<size_t dim, typename stateT, typename simplex>
-		//class ISimplexAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>
-		//{
-		//public:
-		//	ISimplexAlgo(
-		//		FuncInterface::IFunc<dim>* f_pointer, 
-		//		SetOfPoints<dim + 1, Point<dim>>&& setOfPoints) 
-		//		:
-		//		IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>{ f_pointer, std::move(setOfPoints) } {}
-		//	const simplex& GuessDomain() const { return this->state.GuessDomain(); } // unique for direct methods
-		//};
-
 
 		template<size_t dim, typename stateT>
 		class ISimplexAlgo : public IOptimizerAlgorithm<dim, FuncInterface::IFunc<dim>, stateT>

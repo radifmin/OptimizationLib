@@ -158,7 +158,6 @@ namespace OptLib
 		__m256d y;
 
 		constexpr size_t rg_size = 256 / 8 / sizeof(double);
-
 		constexpr size_t itr = dim / rg_size;
 
 		for (size_t i = 0; i < itr; i++)
@@ -208,9 +207,6 @@ namespace OptLib
 			for (int i = itr * rg_size; i < dim; i++)
 				result[i] = arr[i] * val;
 		}
-
-	//	for (auto& elem : arr)
-	//		elem *= val;
 		return result;
 	}
 	template<size_t dim>
@@ -243,8 +239,6 @@ namespace OptLib
 				result[i] = std::sqrt(arr[i]);
 		}
 
-	//	for (auto& elem : arr)
-	//		elem = std::sqrt(elem);
 		return result;
 	}
 	/// elementwise abs
@@ -270,9 +264,6 @@ namespace OptLib
 			for (int i = itr * rg_size; i < dim; i++)
 				result[i] = std::abs(arr[i]);
 		}
-
-	//	for (auto& elem : arr)
-	//		elem = std::abs(elem);
 		return result;
 	}
 	/// scalar product of two vectors
@@ -522,16 +513,15 @@ namespace OptLib
 		return o;
 	}
 
-
 	/// <summary>
-	/// A set of points of type {point with Val} with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef
+	/// Set of points with associated value. The calss makes PointVal from Point and Val
 	/// </summary>
 	/// <typeparam name="point"></typeparam>
+	/// <typeparam name="pointval"></typeparam>
 	template<size_t count, typename point, typename pointval>
-	class SetOfPointValsSort : public RawSetOfPoints<count, pointval>
+	class SetOfPointVal : public RawSetOfPoints<count, pointval>
 	{
-	private:
-		void Sort() { std::sort(ItsSetOfPoints.begin(), ItsSetOfPoints.end()); }
+	protected:
 		static SetOfPoints<count, pointval> make_field(SetOfPoints<count, point>&& _s, std::array<double, count>&& FuncVals)
 		{
 			SetOfPoints<count, pointval> P;
@@ -540,19 +530,35 @@ namespace OptLib
 			return P;
 		}
 	public:
-		SetOfPointValsSort() = default;
-			SetOfPointValsSort(SetOfPoints<count, pointval>&& _s) :
-			RawSetOfPoints<count, pointval>{ std::move(_s) } { this->Sort(); }
-		SetOfPointValsSort(SetOfPoints<count, point>&& _s, std::array<double, count>&& funcVals) : // transforms points to points with vals
-			SetOfPointValsSort<count, point, pointval>{ std::move(make_field(std::move(_s), std::move(funcVals))) } {}
-		//SetOfPointValsSort(const SetOfPoints<count, point>& _s, const std::array<double, count>& funcVals) : // transforms points to points with vals
-		//	SetOfPointValsSort<count, point, pointval>{ make_field(_s, funcVals) } {}
+		SetOfPointVal() = default;
+		SetOfPointVal(SetOfPoints<count, pointval>&& _s) :
+			RawSetOfPoints<count, pointval>{ std::move(_s) } { }
+		SetOfPointVal(SetOfPoints<count, point>&& _s, std::array<double, count>&& funcVals) : // transforms points to points with vals
+			SetOfPointVal<count, point, pointval>{ std::move(make_field(std::move(_s), std::move(funcVals))) } {}
 	};
 
-	using Segment = RawSetOfPoints<2, PointVal<1>>;
+	/// <summary>
+	/// A set of points of type {point with Val} with +-*/ operators overloaded for calculation of Mean, Disp, and VarCoef. The points are sorted according to Val-field.
+	/// </summary>
+	/// <typeparam name="point"></typeparam>
+	template<size_t count, typename point, typename pointval>
+	class SetOfPointValsSort : public SetOfPointVal<count, point, pointval>
+	{
+	private:
+		void Sort() { std::sort(ItsSetOfPoints.begin(), ItsSetOfPoints.end()); }
+
+	public:
+		SetOfPointValsSort() = default;
+			SetOfPointValsSort(SetOfPoints<count, pointval>&& _s) :
+				SetOfPointVal<count, point, pointval>{ std::move(_s) } { this->Sort(); }
+		SetOfPointValsSort(SetOfPoints<count, point>&& _s, std::array<double, count>&& funcVals) : // transforms points to points with vals
+			SetOfPointVal<count, point, pointval>{ std::move(_s), std::move(funcVals) } {this->Sort(); }
+	};
+
+	using Segment = SetOfPointVal<2, Point<1>, PointVal<1>>;
 
 	template<size_t dim>
-	using SimplexValNoSort = RawSetOfPoints<dim + 1, PointVal<dim>>;
+	using SimplexValNoSort = SetOfPointVal<dim + 1, Point<dim>, PointVal<dim>>;
 
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
