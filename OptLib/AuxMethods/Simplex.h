@@ -314,7 +314,6 @@ namespace OptLib
 		return o;
 	}
 
-
 	/// <summary>
 	/// Envelope for the Point<dim>
 	/// </summary>
@@ -383,6 +382,7 @@ namespace OptLib
 		PointVal() = default;
 		PointVal(Point<dim>&& _P, double _Val) : RawPoint{ std::move(_P) }, Val{ _Val }{}
 		PointVal(const Point<dim>& _P, double _Val) : RawPoint{ _P }, Val{ _Val }{}
+
 		bool operator<(const PointVal& rhs)
 		{
 			return this->Val < rhs.Val;
