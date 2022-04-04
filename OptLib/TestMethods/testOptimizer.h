@@ -33,6 +33,23 @@ namespace OptLib
 				}
 				std::cout << "******Dichotomy test end*******\n\n";
 			}
+			static void testOverallOptimizerWithDichotomy()
+			{
+				std::cout << "******OverallOptimizer With Dichotomy test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 101 };
+				ConcreteFunc::Function f{};
+				ConcreteOptimizer::Dichotomy Algo{ &f, {{{-2}, {5}}} };
+				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, prm };
+
+				std::cout << "Optimization with Dichotomy started...\n";
+				opt.Optimize();
+				std::cout << "Optimization with Dichotomy finalized.\n";
+
+				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+
+				std::cout <<
 
 			static void testOverallOptimizerWithBicection()
 			{
