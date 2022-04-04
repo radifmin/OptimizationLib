@@ -30,8 +30,9 @@ int main()
 
 	// test optimizers
 	OptLib::UnitTests::testOptimizer::testBicection();
-	OptLib::UnitTests::testOptimizer::testDichotomy();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithBicection(); 
+	OptLib::UnitTests::testOptimizer::testDichotomy();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithDichotomy(); 
 	OptLib::UnitTests::testOptimizer::testGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	//testOptimizer::testOptimizer_();
