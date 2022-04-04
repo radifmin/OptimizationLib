@@ -20,6 +20,19 @@ namespace OptLib
 				}
 				std::cout << "******Bicection test end*******\n\n";
 			}
+			
+			static void testDichotomy()
+			{
+				std::cout << "******Dichotomy test start*****\n";
+				ConcreteOptimizer::Dichotomy Algo{ new ConcreteFunc::FunctionWithHess{}, {{{-2}, {5}}} };
+				std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+				for (int i = 0; i < 10; i++)
+				{
+					Algo.Proceed();
+					std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+				}
+				std::cout << "******Dichotomy test end*******\n\n";
+			}
 
 			static void testOverallOptimizerWithBicection()
 			{
