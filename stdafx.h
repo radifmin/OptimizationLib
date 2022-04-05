@@ -32,8 +32,10 @@
 
 #include "OptLib/Optimizers/OptimizerInterface.h"
 #include "OptLib/Optimizers/OneDim/Bisection.h"
-#include "OptLib/Optimizers/OverallOptimizer.h"
 #include "OptLib/Optimizers/OneDim/Grid.h"
+#include "OptLib/Optimizers/OneDim/Dichotomy.h"
+
+#include "OptLib/Optimizers/OverallOptimizer.h"
 
 #include "OptLib/RegressionLib/RegressionInterface.h"
 #include "OptLib/RegressionLib/Regression.h"
