@@ -9,26 +9,11 @@
 
 
 
-//using pp = std::array<double, 3>;
-//
-//struct P2 : public pp
-//{
-//	double Val;
-//	P2(double val) :pp{  }, Val{ val }{}
-//
-//	auto arr() { return this->_Elems; }
-//};
-
 
 
 
 int main()
 {
-//	P2 tp{1};
-//	auto tt = tp.data();
-
-
-
 
 
 #ifdef DEBUG_LIB
