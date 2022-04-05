@@ -24,5 +24,6 @@ namespace OptLib
 		{
 
 		};
+
 	} // UnitTests
 } // OptLib
