@@ -5,6 +5,7 @@
 	#include "OptLib/TestMethods/testFunction.h"
 	#include "OptLib/TestMethods/testState.h"
 	#include "OptLib/TestMethods/testOptimizer.h"
+	#include "OptLib/TestMethods/testRegression.h"
 #endif // DEBUG_LIB
 
 
@@ -44,7 +45,10 @@ int main()
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	//testOptimizer::testOptimizer_();
 
-	// reset to previous version
+	// test regression
+
+//	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,2>({1.0, 0.0}, new OptLib::FuncParamInterface::LinearFunc());
+	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
 
 #endif // DEBUG_LIB
 }
