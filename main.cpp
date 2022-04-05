@@ -7,8 +7,15 @@
 	#include "OptLib/TestMethods/testOptimizer.h"
 #endif // DEBUG_LIB
 
+
+
+
+
+
 int main()
 {
+
+
 #ifdef DEBUG_LIB
 	// test Simplex
 	OptLib::UnitTests::testSimplex::testPointOperations();
