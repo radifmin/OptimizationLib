@@ -43,6 +43,8 @@ int main()
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithDichotomy(); 
 	OptLib::UnitTests::testOptimizer::testGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
+	OptLib::UnitTests::testOptimizer::testGoldenSection();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithGoldenSection();
 	//testOptimizer::testOptimizer_();
 
 	// test regression
