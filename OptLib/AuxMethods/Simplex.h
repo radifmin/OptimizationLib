@@ -463,9 +463,10 @@ namespace OptLib
 	/// <param name="disp"></param>
 	/// <returns></returns>
 	template<typename point>
-	point VarCoef(const point& avg, const point& disp)
+	std::pair<point, point> VarCoef(const point& avg, point disp)
 	{// requires sqrt(vector), abs(vector), vector/vector
-		return abs(avg) / sqrt(disp);
+		disp = sqrt(disp);
+		return std::pair{ std::move(disp / abs(avg)), std::move(disp)};
 	}
 
 	template<size_t count, typename point>

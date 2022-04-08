@@ -69,7 +69,7 @@ namespace OptLib
 			}
 
 		protected:
-			SetOfPoints<dim, Point<dim>> CoefMatrix() const
+			const SetOfPoints<dim, Point<dim>>& CoefMatrix() const
 			{
 				return coef_matrix;
 			}

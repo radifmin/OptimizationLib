@@ -33,7 +33,7 @@ namespace OptLib
 
 	public:
 		Optimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, State>* algo_pointer, OptimizerParams prm) :
-			IOptimizer(algo_pointer),
+			IOptimizer<dim, func, State>{ algo_pointer },
 			Prm{ prm },
 			s{ 0 }{}
 
@@ -62,6 +62,7 @@ namespace OptLib
 		int s; // current number of iterations
 		OptimizerParams Prm;
 	};
+
 	template<size_t dim,typename func, typename State>
 	class Optimizer1Step: IOptimizer<dim, func, State>
 	{
@@ -69,8 +70,8 @@ namespace OptLib
 		PointVal<dim> res;
 		bool f = false;
 	public:
-		Optimizer1Step(OptimizerInterface::IOptimizerAlgorithm<dim, func, State>* algo_pointer) :
-			IOptimizer(algo_pointer){}
+		Optimizer1Step(ConcreteOptimizer::Grid* algo_pointer) :
+			IOptimizer<dim, func, State>{ algo_pointer } {}
 		virtual PointVal<dim> Optimize() override 
 		{
 			if (f)

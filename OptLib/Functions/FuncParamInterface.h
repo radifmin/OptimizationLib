@@ -31,12 +31,12 @@ namespace OptLib
 
 
 
-		class LinearFunc : public IFuncParam<1, 2>
+		class LinearFunc : public IFuncParam<1, 1>
 		{
 		public:
-			double operator() (const Point<1>& x, const Point<2>& a) const override
+			double operator() (const Point<1>& x, const Point<1>& a) const override
 			{
-				return x[0] * a[0] + a[1];
+				return x[0] * a[0];
 			}
 		};
 

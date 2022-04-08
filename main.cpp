@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#include <conio.h>
+//#include <Python.h>
+//#include <matplotlibcpp.h>
 
 #ifdef DEBUG_LIB
 	#include "OptLib/TestMethods/testSimplex.h"
@@ -8,13 +11,16 @@
 	#include "OptLib/TestMethods/testRegression.h"
 #endif // DEBUG_LIB
 
-
-
-
+//namespace plt = matplotlibcpp;
 
 
 int main()
 {
+
+
+	/*std::vector<double> y = { 1, 3, 2, 4 };
+	plt::plot(y);
+	plt::savefig("minimal.pdf");*/
 
 
 #ifdef DEBUG_LIB
@@ -49,8 +55,10 @@ int main()
 
 	// test regression
 
-//	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,2>({1.0, 0.0}, new OptLib::FuncParamInterface::LinearFunc());
+	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,1>({1.0}, new OptLib::FuncParamInterface::LinearFunc());
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
+	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
+	OptLib::UnitTests::testLikelihood::test();
 
 #endif // DEBUG_LIB
 }
