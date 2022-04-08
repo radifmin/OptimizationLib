@@ -1,4 +1,4 @@
-#pragma once
+pragma once
 
 #ifdef __AVX__
 #include <immintrin.h>
@@ -34,18 +34,10 @@
 #include "OptLib/Optimizers/OptimizerInterface.h"
 #include "OptLib/Optimizers/OneDim/Bisection.h"
 #include "OptLib/Optimizers/OneDim/Grid.h"
-<<<<<<< HEAD
-=======
 #include "OptLib/Optimizers/OneDim/GoldenSection.h"
->>>>>>> 85765a26689e5c68622d1d0e3a8076ab5001a48e
 #include "OptLib/Optimizers/OneDim/Dichotomy.h"
 
 #include "OptLib/Optimizers/OverallOptimizer.h"
 
 #include "OptLib/RegressionLib/RegressionInterface.h"
-<<<<<<< HEAD
 #include "OptLib/RegressionLib/Regression.h"
-=======
-#include "OptLib/RegressionLib/Regression.h"
-
->>>>>>> 85765a26689e5c68622d1d0e3a8076ab5001a48e
