@@ -33,11 +33,14 @@ namespace OptLib
 		};
 
 
-		template<size_t dimX, size_t dimP, template <size_t dimP> typename func, template <size_t dimX, size_t dimP> typename funcP>
-		using LikelihoodLinear = RegInterface::ILikelihoodFunc<dimX, dimP, func, funcP, Linear>;
+		template<size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP>
+		using LikelihoodLinear = RegInterface::ILikelihoodFunc<dimX, dimP, funcP, Linear>;
 
-		template<size_t dimX, size_t dimP, template <size_t dimP> typename func, template <size_t dimX, size_t dimP> typename funcP>
-		using LikelihoodLogistic = RegInterface::ILikelihoodFunc<dimX, dimP, func, funcP, Logistic>;
-		
+		template<size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP>
+		using LikelihoodLinearWithGrad = RegInterface::ILikelihoodFuncWithGrad<dimX, dimP, funcP, LikelihoodLinear>;
+
+		template<size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP>
+		using LikelihoodLogistic = RegInterface::ILikelihoodFunc<dimX, dimP, funcP, Logistic>;
+	//	
 	} // ConcreteReg
 } // OptLib

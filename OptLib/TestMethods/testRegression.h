@@ -17,10 +17,26 @@ namespace OptLib
 				 auto data = GenerateDataSet<1, 2>(a, f );
 				 auto data1 = data;
 
-				ConcreteReg::LikelihoodLinear<1, 2, FuncInterface::IFunc, FuncParamInterface::IFuncParam> L{std::move(data), f};
+				ConcreteReg::LikelihoodLinear<1, 2, FuncParamInterface::IFuncParam> L{std::move(data), f};
 				std::cout << std::sqrt(L(a)/data1.size()) << "  " << '\n';
 
 				std::cout << "******LikelihoodLinear test end*******\n\n";
+			}
+
+			static void testLikelihoodLinearWithGrad()
+			{
+				std::cout << "******LikelihoodLinearWithGrad test start*****\n";
+
+				Point<2> a{ 1.0,0.0 };
+				auto* f = new OptLib::FuncParamInterface::LinearFunc();
+
+				auto data = GenerateDataSet<1, 2>(a, f);
+				auto data1 = data;
+
+				ConcreteReg::LikelihoodLinearWithGrad<1, 2, FuncParamInterface::IFuncParam> L{ std::move(data), f };
+				std::cout << std::sqrt(L(a) / data1.size()) << "  " << '\n';
+
+				std::cout << "******LikelihoodLinearWithGrad test end*******\n\n";
 			}
 
 

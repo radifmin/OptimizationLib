@@ -51,6 +51,7 @@ int main()
 
 //	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,2>({1.0, 0.0}, new OptLib::FuncParamInterface::LinearFunc());
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
+	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
 
 #endif // DEBUG_LIB
 }
