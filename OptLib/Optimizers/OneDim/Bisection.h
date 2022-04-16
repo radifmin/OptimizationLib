@@ -20,7 +20,7 @@ namespace OptLib
 				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal<1>{ x, f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, f->operator()(x) };
 				}
 			}
 		public:
@@ -69,9 +69,9 @@ namespace OptLib
 			{
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 				Point<1> x{ AuxPoints[0].P[0] + step };
-				AuxPoints[1] = PointVal<1>{ x, f->operator()(x) };
+				AuxPoints[1] = PointVal{ x, f->operator()(x) };
 				x = Point<1>{ AuxPoints[2].P[0] + step };
-				AuxPoints[3] = PointVal<1>{ x, f->operator()(x) };
+				AuxPoints[3] = PointVal{ x, f->operator()(x) };
 			}
 			void temp2()
 			{
@@ -79,7 +79,7 @@ namespace OptLib
 				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal<1>{ x, f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, f->operator()(x) };
 				}
 			}
 		};

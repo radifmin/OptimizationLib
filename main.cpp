@@ -51,6 +51,7 @@ int main()
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	OptLib::UnitTests::testOptimizer::testGoldenSection();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithGoldenSection();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNelderMead();
 	//testOptimizer::testOptimizer_();
 
 	// test regression
