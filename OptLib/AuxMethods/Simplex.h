@@ -608,4 +608,13 @@ namespace OptLib
 	
 	template<size_t dim>
 	using SimplexValSort = SetOfPointValsSort<dim + 1, Point<dim>, PointVal<dim>>;
+
+
+
+	template<size_t dim>
+	using Grad = Point<dim>;
+
+	template<size_t dim>
+	using Hess = SetOfPoints<dim, Point<dim>>;
+
 } // OptLib

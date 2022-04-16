@@ -24,9 +24,10 @@
 
 #include "OptLib/AuxMethods/Simplex.h"
 
-#include "OptLib/Functions/FuncParamInterface.h"
 #include "OptLib/Functions/FunctionInterface.h"
+#include "OptLib/Functions/FuncParamInterface.h"
 #include "OptLib/Functions/Function.h"
+#include "OptLib/Functions/FunctionParam.h"
 
 #include "OptLib/States/StateInterface.h"
 #include "OptLib/States/State.h"

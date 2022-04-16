@@ -12,7 +12,7 @@ namespace OptLib
 				std::cout << "******LikelihoodLinear test start*****\n";
 
 				Point<1> a{ 1.0 };
-				auto* f = new OptLib::FuncParamInterface::LinearFunc();
+				auto* f = new OptLib::ConcreteFuncParam::LinearFunc();
 
 				 auto data = GenerateDataSet<1, 1>(a, f );
 				 auto data1 = data;
@@ -28,13 +28,13 @@ namespace OptLib
 				std::cout << "******LikelihoodLinearWithGrad test start*****\n";
 
 				Point<1> a{ 1.0 };
-				auto* f = new OptLib::FuncParamInterface::LinearFunc();
+				auto* f = new OptLib::ConcreteFuncParam::LinearFuncWithGrad();
 
 				auto data = GenerateDataSet<1, 1>(a, f);
 				auto data1 = data;
 
-				ConcreteReg::LikelihoodLinearWithGrad<1, 1, FuncParamInterface::IFuncParam> L{ std::move(data), f };
-				std::cout << std::sqrt(L(a) / data1.size()) << "  " << '\n';
+				ConcreteReg::LikelihoodLinearWithGrad<1, 1, FuncParamInterface::IFuncParamWithGrad> L{ std::move(data), f };
+		//		std::cout << std::sqrt(L(a) / data1.size()) << "  " << '\n';
 
 				std::cout << "******LikelihoodLinearWithGrad test end*******\n\n";
 			}
@@ -69,7 +69,7 @@ namespace OptLib
 			{
 				std::cout << "******Likelihood With Bisection test start*****\n";
 				Point<1> a{ 2.5438 };
-				FuncParamInterface::LinearFunc* f = new FuncParamInterface::LinearFunc{};
+				auto* f = new ConcreteFuncParam::LinearFunc{};
 				RegInterface::DataSet<1> data = GenerateDataSet(a, f);
 				ConcreteReg::LikelihoodLinear<1, 1, FuncParamInterface
 					::IFuncParam> L{ std::move(data),f };

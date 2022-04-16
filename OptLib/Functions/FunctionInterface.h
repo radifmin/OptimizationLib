@@ -5,6 +5,7 @@ namespace OptLib
 {
 	namespace FuncInterface
 	{
+
 		template <size_t dim>
 		class IFunc
 		{ // direct methods only call the function calculation
@@ -24,7 +25,7 @@ namespace OptLib
 		class IGrad
 		{
 		public:
-			virtual Point<dim> grad(const Point<dim>& x) const = 0;
+			virtual Grad<dim> grad(const Point<dim>& x) const = 0;
 		};
 
 		template <size_t dim>
@@ -32,7 +33,7 @@ namespace OptLib
 		{
 		public:
 			// each Point<dim> is a row of the Hessian matrix
-			virtual SetOfPoints<dim, Point<dim>> hess(const Point<dim>& x) const = 0;
+			virtual Hess<dim> hess(const Point<dim>& x) const = 0;
 		};
 
 		template <size_t dim>

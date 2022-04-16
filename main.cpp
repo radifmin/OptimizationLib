@@ -56,7 +56,7 @@ int main()
 
 	// test regression
 
-	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,1>({1.0}, new OptLib::FuncParamInterface::LinearFunc());
+	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,1>({1.0}, new OptLib::ConcreteFuncParam::LinearFunc());
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
 	OptLib::UnitTests::testLikelihood::test();

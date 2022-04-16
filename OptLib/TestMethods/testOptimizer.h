@@ -49,7 +49,7 @@ namespace OptLib
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
 
-				std::cout << "******OverallOptimizer With Dichotomy test end*****\n";
+				std::cout << "******OverallOptimizer With Dichotomy test end*****\n\n";
 			}
 
 			static void testOverallOptimizerWithBicection()
