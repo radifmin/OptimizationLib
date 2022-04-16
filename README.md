@@ -8,3 +8,5 @@ Daniil Onishenko @Danil482
 Radif Minnigaliev @radifmin
 
 Alina Gismatullina @GAlinaD1
+
+Rustam Fahrutdinov @FakhrutdinovRustam
