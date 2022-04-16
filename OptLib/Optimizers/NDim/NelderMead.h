@@ -26,9 +26,9 @@ namespace OptLib
 				PointVal<dim>& xl = NewSimplex[0];
 				PointVal<dim>& xh = NewSimplex[dim];
 				PointVal<dim>& xg = NewSimplex[dim - 1];
-				Point<dim> XC = NewSimplex[0].P;
 
 				// simplex center excluding the point with the largest Val
+				Point<dim> XC = NewSimplex[0].P;
 				for (int i = 1; i < dim; i++)
 					XC = XC + NewSimplex[i].P;
 				PointVal<dim> xc{ PointVal<dim>::CreateFromPoint(std::move(XC / (dim - 0.0)), f) };
