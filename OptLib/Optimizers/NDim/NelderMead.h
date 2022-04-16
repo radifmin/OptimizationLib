@@ -42,12 +42,16 @@ namespace OptLib
 					PointVal<dim> xe{ PointVal<dim>::CreateFromPoint(std::move(xc * (1.0 - gamma) + xr * gamma), f) };
 					if (xe.Val < xr.Val)
 						xh = xe;
+						State.UpdateDomain(std::move(NewSimplex));
+						return State.Guess();
+					}
 					else
+					{
 						xh = xr;
 
-					State.UpdateDomain(std::move(NewSimplex));
-					return State.Guess();
-				}
+						State.UpdateDomain(std::move(NewSimplex));
+						return State.Guess();
+					}
 
 				if (xr.Val < xg.Val)
 				{
@@ -58,7 +62,7 @@ namespace OptLib
 
 				if (xr.Val < xh.Val) std::swap(xr, xh);
 
-				PointVal<dim> xs = PointVal<dim>::CreateFromPoint(std::move(xh.P * beta + xc.P * (1 - beta)), f);
+				PointVal<dim> xs{ PointVal<dim>::CreateFromPoint(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
 				if (xs.Val < xh.Val)
 				{
 					xh = xs;
@@ -66,12 +70,12 @@ namespace OptLib
 					return State.Guess();
 				}
 
-				SqueeseSimplex(xl.P, NewSimplex);
+				SqueezeSimplex(xl.P, NewSimplex);
 				return State.Guess();
-			}
+				}
 
 		protected:
-			void SqueeseSimplex(const Point<dim>& xl, const SetOfPoints<dim + 1, PointVal<dim>>& Simplex)
+			void SqueezeSimplex(const Point<dim>& xl, const SetOfPoints<dim + 1, PointVal<dim>>& Simplex)
 			{
 				SetOfPoints<dim + 1, Point<dim>> NewSimplex;
 
