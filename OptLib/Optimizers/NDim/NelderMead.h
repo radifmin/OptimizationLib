@@ -55,7 +55,7 @@ namespace OptLib
 					return State.Guess();
 				}
 
-				if (xr.Val < xh.Val) std::swap(xr, xh);
+				if (xr.Val < xh.Val) xh = xr; // std::swap(xr, xh);
 
 				PointVal<dim> xs{ PointVal<dim>::CreateFromPoint(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
 				if (xs.Val < xh.Val)
