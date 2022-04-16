@@ -44,9 +44,9 @@ namespace OptLib
 						xh = xe;
 					else
 						xh = xr;
+					State.UpdateDomain(std::move(NewSimplex));
+					return State.Guess();
 				}
-				State.UpdateDomain(std::move(NewSimplex));
-				return State.Guess();
 
 				if (xr.Val < xg.Val)
 				{
