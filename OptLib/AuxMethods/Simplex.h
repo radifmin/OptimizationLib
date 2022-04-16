@@ -53,6 +53,18 @@ namespace OptLib
 		p [0] += a;
 		return p;
 	}
+	template <size_t dim>
+	bool operator!= (Point<dim> p1, Point<dim> p2)
+	{
+		for(int i =0;i<dim;i++)
+		{
+			if(p1[i] != p2[i])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	/// elementwise subtraction of vector - vector
 	template<size_t dim>
 	Point<dim> operator-(const Point<dim>& arr1, const Point<dim>& arr2)
@@ -314,18 +326,20 @@ namespace OptLib
 		return o;
 	}
 
+
 	/// <summary>
 	/// Envelope for the Point<dim>
 	/// </summary>
 	template<size_t dim>
 	struct RawPoint
 	{
-		//	RawPoint() = default;
-		//	RawPoint(Point<dim>&& _P) :P{ std::move(_P)} {};
-		//	RawPoint(const Point<dim>& _P) :P{ _P } {};
+		RawPoint() = default;
 
 		Point<dim> P;
+		RawPoint(Point<dim>&& _P) :P{ std::move(_P)} {};
+		RawPoint(const Point<dim>& _P) :P{ _P } {};
 		double operator[](int i) const { return P[i]; }
+
 		operator Point<dim>() { return P; }
 	};
 	///// elementwise addition of vector + vector
@@ -379,9 +393,9 @@ namespace OptLib
 	{
 		double Val;
 		PointVal() = default;
+	//	PointVal(const PointVal& _P) : RawPoint{ (_P.P) }, Val{ _P.Val }{}
 		PointVal(Point<dim>&& _P, double _Val) : RawPoint{ std::move(_P) }, Val{ _Val }{}
 		PointVal(const Point<dim>& _P, double _Val) : RawPoint{ _P }, Val{ _Val }{}
-
 		bool operator<(const PointVal& rhs)
 		{
 			return this->Val < rhs.Val;
@@ -416,11 +430,33 @@ namespace OptLib
 	{
 		return PointVal<dim>{std::move(arr1.P* arr2.P), arr1.Val* arr2.Val};
 	}
+	template<size_t dim>
+	PointVal<dim> operator* (PointVal<dim> p, double val)
+	{
+		return PointVal<dim>{std::move(p.P * val), p.Val* val};
+	}
 	/// elementwise division of vector * vector
 	template<size_t dim>
 	PointVal<dim> operator/(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
 	{
 		return PointVal<dim>{std::move(arr1.P/ arr2.P), arr1.Val/ arr2.Val};
+	}
+	template<size_t dim>
+	bool operator!=(const PointVal<dim>& arr1, const PointVal<dim>& arr2)
+	{
+		for(int i = 0;i<dim;i++)
+		{
+			if(arr1[i]!=arr2[i])
+			{
+				return false;
+			}
+		}
+		if(arr1.Val!=arr2.Val)
+		{
+			return false;
+		}
+		return true;
+		
 	}
 	///  elementwise sqrt nnn
 	template<size_t dim>
@@ -466,7 +502,7 @@ namespace OptLib
 	std::pair<point, point> VarCoef(const point& avg, point disp)
 	{// requires sqrt(vector), abs(vector), vector/vector
 		disp = sqrt(disp);
-		return std::pair{ std::move(disp / abs(avg)), std::move(disp)};
+		return std::pair{ std::move(disp / abs(avg)), std::move(disp) };
 	}
 
 	template<size_t count, typename point>

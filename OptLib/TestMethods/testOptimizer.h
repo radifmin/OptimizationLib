@@ -20,7 +20,7 @@ namespace OptLib
 				}
 				std::cout << "******Bicection test end*******\n\n";
 			}
-			
+
 			static void testDichotomy()
 			{
 				std::cout << "******Dichotomy test start*****\n";
@@ -121,9 +121,9 @@ namespace OptLib
 			static void testGrid()
 			{
 				std::cout << "******Grid test start*****\n";
-				ConcreteOptimizer::Grid Algo { new ConcreteFunc::FunctionWithHess{}, {-15, 25} , 100};
-				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = "<< Algo.n<<"\n";
-				std::cout<<"Result is: "<< Algo.Proceed() << "\n";
+				ConcreteOptimizer::Grid Algo{ new ConcreteFunc::FunctionWithHess{}, {-15, 25} , 100 };
+				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = " << Algo.n << "\n";
+				std::cout << "Result is: " << Algo.Proceed() << "\n";
 				std::cout << "******Grid test end*******\n\n";
 			}
 			static void testOverallOptimizerWithGrid()
@@ -131,13 +131,32 @@ namespace OptLib
 				std::cout << "******OverallOptimizer With Grid test start*****\n";
 
 				ConcreteFunc::Function f{};
-				ConcreteOptimizer::Grid Algo{ &f, {-15, 25} ,5};
-				Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo};
+				ConcreteOptimizer::Grid Algo{ &f, {-15, 25} ,5 };
+				Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo };
 
 				std::cout << "Optimization with Grid started...\n";
 				std::cout << "Optimization with Grid finalized.\n";
-				std::cout << "Final guess is x = " <<  opt.Optimize() << '\n';
+				std::cout << "Final guess is x = " << opt.Optimize() << '\n';
 				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
+			}
+			static void testOverallOptimizerWithNelderMead()
+			{
+				std::cout << "******OverallOptimizer With Nelder Mead test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 500 };
+				/*ConcreteFunc::Function f{};*/
+				ConcreteFunc::Paraboloid2D f{ SetOfPoints<2,Point<2>>{ { {1,0}, {0,10}}} };
+				ConcreteOptimizer::NelderMead<2> Algo{ &f, {{{0,-1}, {-1,1},{1,1}}},1.0,0.5,2.0 };
+				/*ConcreteOptimizer::NelderMead<1> Algo{ &f, {-9, 9},1.0,0.5,2.0 };*/
+				Optimizer<2, FuncInterface::IFunc<2>, ConcreteState::StateDirect<2>> opt{ &Algo, prm };
+
+				std::cout << "Optimization with Nelder Mead started...\n";
+				opt.Optimize();
+				std::cout << "Optimization with Nelder Mead finalized.\n";
+
+				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "******OverallOptimizer With Nelder Mead test end*******\n\n";
 			}
 		};
 

@@ -40,7 +40,7 @@ namespace OptLib
 			}
 		protected:
 			simplex ItsGuessDomain; // unique for direct optimization methods
-			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, FuncInterface::IFunc<dim>* f)
+			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, const FuncInterface::IFunc<dim>* f) 
 			{
 				return f->operator()(State);
 			}
@@ -55,7 +55,7 @@ namespace OptLib
 				SetDomain(std::move(State), f);
 			}
 			const simplex& GuessDomain() const { return ItsGuessDomain; } // unique for direct optimization methods
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
+			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
 			{
 				SetDomain(std::move(State), std::move(FuncVals(State, f)));
 			}

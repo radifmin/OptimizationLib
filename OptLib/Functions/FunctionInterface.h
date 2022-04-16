@@ -9,9 +9,9 @@ namespace OptLib
 		class IFunc
 		{ // direct methods only call the function calculation
 		public:
-			virtual double operator() (const Point<dim>& x) const = 0;
+			virtual double operator () (const Point<dim>& x) const = 0;
 			template<size_t count>
-			std::array<double, count> operator() (const SetOfPoints<count, Point<dim>>& x)
+			std::array<double, count> operator () (const SetOfPoints<count, Point<dim>>& x) const
 			{
 				std::array<double, count> out;
 				for (int i = 0; i < count; i++)

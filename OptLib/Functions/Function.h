@@ -187,6 +187,29 @@ namespace OptLib
 				return f->operator()(x, ParamVals);
 			}
 		};
+		template<size_t dim>
+		class Func : public FuncInterface::IFunc<dim>
+		{
+		public:
+			Func()
+			{
+#ifdef DEBUG_LIB
+				std::cout << "Paraboloid  has been instantiated.\n";
+#endif // DEBUG_LIB
+			}
+
+		public:
+			virtual double operator () (const Point<dim>& x) const override
+			{
+				double res = 0.0;
+				for (int i = 0; i < dim; i++)
+				{
+					res += x[i] * x[i];
+				}
+				return res;
+			}
+		};
+
 	} // ConcreteFuncs
 
 } // OptLib
