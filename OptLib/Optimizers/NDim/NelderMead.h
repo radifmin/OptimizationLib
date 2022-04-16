@@ -73,7 +73,7 @@ namespace OptLib
 				SqueezeSimplex(xl.P, NewSimplex);
 				return State.Guess();
 				}
-
+			    
 		protected:
 			void SqueezeSimplex(const Point<dim>& xl, const SetOfPoints<dim + 1, PointVal<dim>>& Simplex)
 			{
