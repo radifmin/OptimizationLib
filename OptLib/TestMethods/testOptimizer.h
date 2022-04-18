@@ -8,9 +8,9 @@ namespace OptLib
 		class testOptimizer
 		{
 		public:
-			static void testBicection()
+			static void testBisection()
 			{
-				std::cout << "******Bicection test start*****\n";
+				std::cout << "******Bisection test start*****\n";
 
 				ConcreteFunc::FunctionWithHess f{};
 				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &f };
@@ -22,11 +22,11 @@ namespace OptLib
 						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &f);
 					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				}
-				std::cout << "******Bicection test end*******\n\n";
+				std::cout << "******Bisection test end*******\n\n";
 			}
-			static void testOverallOptimizerWithBicection()
+			static void testOverallOptimizerWithBisection()
 			{
-				std::cout << "******OverallOptimizer With Bicection test start*****\n";
+				std::cout << "******OverallOptimizer With Bisection test start*****\n";
 
 				OptimizerParams prm{ 0.001, 0.001, 101 };
 				ConcreteFunc::Function f{};
@@ -34,14 +34,14 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateBisection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-				std::cout << "Optimization with Bicection started...\n";
+				std::cout << "Optimization with Bisection started...\n";
 				opt.Optimize<ConcreteOptimizer::Bisection>();
-				std::cout << "Optimization with Bicection finalized.\n";
+				std::cout << "Optimization with Bisection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
 
-				std::cout << "******OverallOptimizer With Bicection test end*******\n\n";
+				std::cout << "******OverallOptimizer With Bisection test end*******\n\n";
 			}
 
 

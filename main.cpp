@@ -40,8 +40,8 @@ int main()
 	//OptLib::UnitTests::testState::testStateStochastic(); // TODO
 
 	// test optimizers
-	OptLib::UnitTests::testOptimizer::testBicection();
-	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithBicection(); 
+	OptLib::UnitTests::testOptimizer::testBisection();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithBisection(); 
 	OptLib::UnitTests::testOptimizer::testDichotomy();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithDichotomy(); 
 	OptLib::UnitTests::testOptimizer::testGoldenSection();

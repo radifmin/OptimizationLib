@@ -5,7 +5,7 @@ Contributing students
 
 Daniil Onishenko @Danil482
 
-Radif Minnigaliev @radifmin
+Radif Minnigaleev @radifmin
 
 Alina Gismatullina @GAlinaD1
 
