@@ -74,24 +74,16 @@ namespace OptLib
 		{
 		protected:
 			OptimizerParams prm{ 0.001, 0.001, 101 };
-			LType<dimX, dimP, funcP> LH;
+			LType<dimX, dimP, funcP> LH; // Likelihood function
 			Point<dimP> Optimum;
 
 		public:
-			IRegression(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer, OptimizerParams prm_ = OptimizerParams{ 0.001, 0.001, 101 }) :
-				prm{ prm_ }, LH{ std::move(data), f_pointer }, Optimum{ Optimize() }{}
-
-			double L(const Point<dimP>& a) { return LH(a); }
+			IRegression(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer, OptAlgo* Algo,
+				OptimizerParams prm_ = OptimizerParams{ 0.001, 0.001, 101 }) 
+				:
+				prm{ prm_ }, LH{ std::move(data), f_pointer }, Optimum{ Algo->Optimize() }{}
 
 			double operator()(const Point<dimX>& x) { return LH.f->operator()(x, Optimum); }
-
-		protected:
-			Point<dimP> Optimize()
-			{
-				OptAlgo Algo{ &f, {-2, 5} };
-
-				return Point<dimP>{};
-			}
 		};
 
 	} // RegInterface

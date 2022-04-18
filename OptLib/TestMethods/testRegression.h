@@ -65,30 +65,27 @@ namespace OptLib
 				return out;
 			}
 
-			static void test()
+			static void LikelihoodMinimization()
 			{
-				std::cout << "******Likelihood With Bisection test start*****\n";
+				std::cout << "******Likelihood minimization With Bisection test start*****\n";
 				Point<1> a{ 2.5438 };
-				auto* f = new ConcreteFuncParam::LinearFunc{};
-				RegInterface::DataSet<1> data = GenerateDataSet(a, f);
+				ConcreteFuncParam::LinearFunc f{};
 				ConcreteReg::LikelihoodLinear<1, 1, FuncParamInterface
-					::IFuncParam> L{ std::move(data),f };
-				//ConcreteOptimizer::Grid Algo{ &L, {-15, 25} ,5000 };
-				//Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo };
+					::IFuncParam> L{ GenerateDataSet(a, &f), &f };
 
-				ConcreteOptimizer::Bisection Algo{ &L, {-10, 18}};
-				//ConcreteOptimizer::Dichotomy Algo{ &L, {-15, 25}};
-				//ConcreteOptimizer::GoldenSection Algo{ &L, {-15, 25}};
-				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, OptimizerParams{0.001, 0.001, 25} };
+				OptimizerParams prm{ 0.001, 0.001, 101 };
 
-				std::cout << "Optimization with Grid started...\n";
-				opt.Optimize();
-				std::cout << "Optimization with Grid finalized.\n";
+				ConcreteState::StateBisection State{ SetOfPoints<2, Point<1>>{ {-2, 5} },&L };
+				Optimizer<1, ConcreteState::StateBisection, FuncInterface::IFunc> opt{ &State, &L, prm };
+
+				std::cout << "Optimization with Bisection started...\n";
+				opt.Optimize<ConcreteOptimizer::Bisection>();
+				std::cout << "Optimization with Bisection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "Final guess is x = " << State.Guess() << '\n';
 
-				std::cout << "******Likelihood With Bisection test end*****\n";
+				std::cout << "******Likelihood minimization With Bisection test end*****\n";
 			}
 		};
 

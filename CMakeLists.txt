@@ -9,6 +9,6 @@ project ("OptimizationLib")
 
 # Add source to this project's executable.
 set(CMAKE_CXX_STANDARD 17)
-add_executable (OptimizationLib "main.cpp" "OptLib/Functions/FunctionParam.h")
+add_executable (OptimizationLib "main.cpp")
 
 # TODO: Add tests and install targets if needed.

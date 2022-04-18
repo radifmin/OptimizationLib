@@ -14,7 +14,23 @@ namespace OptLib
 		/// <summary>
 		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x). Must be sorted with respect to x == x[0]
 		/// </summary>
-		using StateSegment = StateInterface::IStateSimplex<1, SimplexValNoSort<1>>;
+		class StateSegment : public StateInterface::IStateSimplex<1, SimplexValNoSort<1>>
+		{
+		public:
+			StateSegment(const StateSegment&) = default;
+			StateSegment(SetOfPoints<2, Point<1>>&& State, FuncInterface::IFunc<1>* f)
+				:
+				StateInterface::IStateSimplex<1, SimplexValNoSort<1>>(std::move(OrderPointsInSegment(State)), f)
+			{}
+
+		protected:
+			SetOfPoints<2, Point<1>> OrderPointsInSegment(SetOfPoints<2, Point<1>>& setOfPoints)
+			{
+				if (setOfPoints[0][0] > setOfPoints[1][0])
+					std::swap(setOfPoints[0], setOfPoints[1]);
+				return setOfPoints;
+			}
+		};
 
 		/// <summary>
 		/// First and second order methods require only a point rather than entire simplex for optimization

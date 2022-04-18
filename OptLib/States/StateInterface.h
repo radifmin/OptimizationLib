@@ -39,7 +39,7 @@ namespace OptLib
 				return true;
 			}
 		protected:
-			simplex ItsGuessDomain; // unique for direct optimization methods
+			simplex ItsGuessDomain; // the field is unique for direct optimization methods
 			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, const FuncInterface::IFunc<dim>* f) 
 			{
 				return f->operator()(State);

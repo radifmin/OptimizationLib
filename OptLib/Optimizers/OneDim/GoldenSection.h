@@ -3,46 +3,51 @@
 
 namespace OptLib
 {
-	namespace ConcreteOptimizer
+	namespace ConcreteState
 	{
-		class GoldenSection : public OptimizerInterface::ISegmentAlgo
+		/// <summary>
+		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x). Must be sorted with respect to x == x[0]
+		/// </summary>
+		class StateGoldenSection : public StateSegment
 		{
-			SetOfPoints<4, PointVal<1>> AuxPoints;
+		public:
+			SetOfPoints<4, PointVal<1>> AuxPoints{};
 			double phi;
 			double resphi;
-		public:
-			GoldenSection(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints) :
-				OptimizerInterface::ISegmentAlgo{ f_pointer, std::move(setOfPoints) }
+
+			StateGoldenSection(SetOfPoints<2, Point<1>>&& State, FuncInterface::IFunc<1>* f)
+				:
+				StateSegment(std::move(State), f)
 			{
 				phi = (1 + std::sqrt(5)) / 2;
 				resphi = 2 - phi;
 
-				AuxPoints[0] = State.GuessDomain().Points()[0];
-				AuxPoints[3] = State.GuessDomain().Points()[1];
-
-				Point<1> x1{ AuxPoints[0].P[0] + resphi * (AuxPoints[3].P[0] - AuxPoints[0].P[0]) };
-				AuxPoints[1] = PointVal<1>{ x1, f->operator()(x1) };
-
-				Point<1> x2{ AuxPoints[3].P[0] - resphi * (AuxPoints[3].P[0] - AuxPoints[0].P[0]) };
-				AuxPoints[2] = PointVal<1>{ x2, f->operator()(x2) };
-
+				AuxPoints[0] = GuessDomain().Points()[0];
+				AuxPoints[3] = GuessDomain().Points()[1];
+				AuxPoints[1] = PointVal<1>::CreateFromPoint(AuxPoints[0].P + resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
+				AuxPoints[2] = PointVal<1>::CreateFromPoint(AuxPoints[3].P - resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 			}
+		};
+	} // ConcreteOptimizer
+
+	namespace ConcreteOptimizer
+	{
+		class GoldenSection
+		{
 		public:
-			virtual PointVal<1> Proceed() override
+			static PointVal<1> Proceed(ConcreteState::StateGoldenSection& State, const FuncInterface::IFunc<1>* f)
 			{
+				auto& AuxPoints = State.AuxPoints;
+
 				if (AuxPoints[1].Val < AuxPoints[2].Val) {
 					AuxPoints[3] = AuxPoints[2];
 					AuxPoints[2] = AuxPoints[1];
-
-					Point<1> x1{ AuxPoints[0].P[0] + resphi * (AuxPoints[3].P[0] - AuxPoints[0].P[0]) };
-					AuxPoints[1] = PointVal<1>{ x1, f->operator()(x1) };
+					AuxPoints[1] = PointVal<1>::CreateFromPoint(AuxPoints[0].P + State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 				}
 				else {
 					AuxPoints[0] = AuxPoints[1];
 					AuxPoints[1] = AuxPoints[2];
-
-					Point<1> x2{ AuxPoints[3].P[0] - resphi * (AuxPoints[3].P[0] - AuxPoints[0].P[0]) };
-					AuxPoints[2] = PointVal<1>{ x2, f->operator()(x2) };
+					AuxPoints[2] = PointVal<1>::CreateFromPoint(AuxPoints[3].P - State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 				}
 				State.UpdateDomain({ AuxPoints[0], AuxPoints[3] });
 				return State.Guess();

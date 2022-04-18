@@ -9,80 +9,75 @@ namespace OptLib
 		int max_iter;
 	};
 
-	template<size_t dim, typename func, typename State>
-	class IOptimizer
-	{
-	protected:
-		OptimizerInterface::IOptimizerAlgorithm<dim, func, State>* Algo;
-	public:
-		IOptimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, State>* algo_pointer) :Algo{ algo_pointer } {}
-
-		virtual PointVal <dim> Optimize() = 0;
-
-	};
-
-	template<size_t dim, typename func, typename State>
-	class Optimizer: IOptimizer<dim,func,State>
+	template<size_t dim, 
+		typename state, 
+		template<size_t dim> typename func>
+	class Optimizer
 	{
 	public:
 		double tol_f() { return Prm.eps_f; }
 		double tol_x() { return Prm.eps_x; }
 		int MaxIterCount() { return Prm.max_iter; }
 		int CurIterCount() { return s; }
-		PointVal<dim> CurrentGuess() { return Algo->CurrentPointAndVal(); }
+		PointVal<dim> CurrentGuess() { return State->Guess(); }
 
 	public:
-		Optimizer(OptimizerInterface::IOptimizerAlgorithm<dim, func, State>* algo_pointer, OptimizerParams prm) :
-			IOptimizer<dim, func, State>{ algo_pointer },
+		Optimizer(state* State_, func<dim>* f_, OptimizerParams prm) :
+			State{State_},
+			f{f_},
 			Prm{ prm },
 			s{ 0 }{}
 
+		template<typename algo>
 		PointVal<dim> Optimize()
 		{
 			// TODO : separate thread
-			bool f = false;
-			while (!f &&
+			bool g = false;
+			while (!g &&
 				s < MaxIterCount())
 			{
-				Algo->Proceed();
+				OptimizerInterface::OptimizerAlgorithm<dim>::Proceed<algo, state, func>(State, f);
 				s++;
-				f = Algo->IsConverged(tol_x(), tol_x());
+				g = OptimizerInterface::OptimizerAlgorithm<dim>::IsConverged(State, tol_x(), tol_x());
 			}
 			return CurrentGuess();
 		}
 
+		template<typename algo>
 		PointVal<dim> Continue(double eps_x, double eps_f)
 		{
 			Prm.eps_f = eps_f;
 			Prm.eps_x = eps_x;
-			return Optimize();
+			return Optimize<algo>();
 		}
 
 	protected:
+		state* State;
+		func<dim>* f;
+
 		int s; // current number of iterations
 		OptimizerParams Prm;
 	};
 
-	template<size_t dim,typename func, typename State>
-	class Optimizer1Step: IOptimizer<dim, func, State>
+	template<size_t dim,
+		typename state,
+		template<size_t dim> typename func>
+	class Optimizer1Step
 	{
 	protected:
-		PointVal<dim> res;
-		bool f = false;
+		state* State;
+		func<dim>* f;
 	public:
-		Optimizer1Step(ConcreteOptimizer::Grid* algo_pointer) :
-			IOptimizer<dim, func, State>{ algo_pointer } {}
-		virtual PointVal<dim> Optimize() override 
+		Optimizer1Step(state* State_, func<dim>* f_) :
+			State{ State_ },
+			f{ f_ }{}
+		PointVal<dim> CurrentGuess() { return State->Guess(); }
+
+		template<typename algo>
+		PointVal<dim> Optimize()
 		{
-			if (f)
-			{
-				return res;
-			}
-			else
-			{
-				f = true;
-				return Algo->Proceed();
-			}
+			OptimizerInterface::OptimizerAlgorithm<dim>::Proceed<algo, state, func>(State, f);
+			return CurrentGuess();
 		}
 	};
 } // OptLib

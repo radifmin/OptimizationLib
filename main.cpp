@@ -16,12 +16,9 @@
 
 int main()
 {
-
-
 	/*std::vector<double> y = { 1, 3, 2, 4 };
 	plt::plot(y);
 	plt::savefig("minimal.pdf");*/
-
 
 #ifdef DEBUG_LIB
 	// test Simplex
@@ -47,19 +44,18 @@ int main()
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithBicection(); 
 	OptLib::UnitTests::testOptimizer::testDichotomy();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithDichotomy(); 
+	OptLib::UnitTests::testOptimizer::testGoldenSection();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGoldenSection();
 	OptLib::UnitTests::testOptimizer::testGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
-	OptLib::UnitTests::testOptimizer::testGoldenSection();
-	OptLib::UnitTests::testOptimizer::testOverallOptimizer_WithGoldenSection();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNelderMead();
-	//testOptimizer::testOptimizer_();
 
 	// test regression
 
 	OptLib::UnitTests::testLikelihood::GenerateDataSet<1,1>({1.0}, new OptLib::ConcreteFuncParam::LinearFunc());
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
-	OptLib::UnitTests::testLikelihood::test();
+	OptLib::UnitTests::testLikelihood::LikelihoodMinimization();
 
 #endif // DEBUG_LIB
 }

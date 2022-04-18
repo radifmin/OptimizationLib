@@ -2,23 +2,39 @@
 #include "stdafx.h"
 namespace OptLib
 {
-	namespace ConcreteOptimizer
+	namespace ConcreteState
 	{
+		/// <summary>
+		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x). Must be sorted with respect to x == x[0]
+		/// </summary>
 		template<size_t dim>
-		class NelderMead : public OptimizerInterface::IDirectAlgo<dim>
+		class StateNelderMead : public StateDirect<dim>
 		{
-		protected:
+		public:
 			double alpha;
 			double beta;
 			double gamma;
-		public:
-			NelderMead(FuncInterface::IFunc<dim>* f_pointer, SetOfPoints<dim + 1, Point<dim>>&& setOfPoints,
-				double alpha_, double beta_, double gamma_) :
-				OptimizerInterface::IDirectAlgo<dim>
-			{ f_pointer, std::move(setOfPoints) }, alpha{ alpha_ }, beta{ beta_ }, gamma{ gamma_ } {}
 
-			virtual PointVal<dim> Proceed() override
+		public:
+			StateNelderMead(SetOfPoints<dim+1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f,
+				double alpha_, double beta_, double gamma_) : StateDirect<dim>(std::move(State), f),
+				alpha{ alpha_ }, beta{ beta_ }, gamma{ gamma_ }{};
+		};
+	} // ConcreteOptimizer
+
+	namespace ConcreteOptimizer
+	{
+		template<size_t dim>
+		class NelderMead
+		{
+		public:
+
+			static PointVal<dim> Proceed(ConcreteState::StateNelderMead<dim>& State, const FuncInterface::IFunc<dim>* f)
 			{
+				double alpha = State.alpha;
+				double beta = State.beta;
+				double gamma = State.gamma;
+
 				SetOfPoints<dim + 1, PointVal<dim>> NewSimplex = State.GuessDomain().Points();
 
 				// auxillary points
@@ -65,19 +81,19 @@ namespace OptLib
 					return State.Guess();
 				}
 
-				SqueezeSimplex(xl.P, NewSimplex);
+				State.SetDomain(SqueezeSimplex(xl.P, NewSimplex), f);
 				return State.Guess();
 				}
 			    
 		protected:
-			void SqueezeSimplex(const Point<dim>& xl, const SetOfPoints<dim + 1, PointVal<dim>>& Simplex)
+			static auto SqueezeSimplex(const Point<dim>& xl, const SetOfPoints<dim + 1, PointVal<dim>>& Simplex)
 			{
 				SetOfPoints<dim + 1, Point<dim>> NewSimplex;
 
 				for (int i = 0; i < dim + 1; i++)
 					NewSimplex[i] = Point<dim>{ std::move(xl + (Simplex[i].P - xl) / 2.0) };
 
-				State.SetDomain(std::move(NewSimplex), this->f);
+				return NewSimplex;
 			}
 		};
 	}//ConcreteOptimizer

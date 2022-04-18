@@ -11,97 +11,165 @@ namespace OptLib
 			static void testBicection()
 			{
 				std::cout << "******Bicection test start*****\n";
-				ConcreteOptimizer::Bisection Algo{ new ConcreteFunc::FunctionWithHess{}, {-2, 5} };
-				std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+
+				ConcreteFunc::FunctionWithHess f{};
+				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &f };
+
+				std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				for (int i = 0; i < 10; i++)
 				{
-					Algo.Proceed();
-					std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+					OptimizerInterface::OptimizerAlgorithm<1>::
+						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &f);
+					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				}
 				std::cout << "******Bicection test end*******\n\n";
 			}
-
-			static void testDichotomy()
-			{
-				std::cout << "******Dichotomy test start*****\n";
-				ConcreteOptimizer::Dichotomy Algo{ new ConcreteFunc::FunctionWithHess{}, {-2, 5} };
-				std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
-				for (int i = 0; i < 10; i++)
-				{
-					Algo.Proceed();
-					std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
-				}
-				std::cout << "******Dichotomy test end*******\n\n";
-			}
-			static void testOverallOptimizerWithDichotomy()
-			{
-				std::cout << "******OverallOptimizer With Dichotomy test start*****\n";
-
-				OptimizerParams prm{ 0.001, 0.001, 101 };
-				ConcreteFunc::Function f{};
-				ConcreteOptimizer::Dichotomy Algo{ &f, {-2, 5} };
-				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, prm };
-
-				std::cout << "Optimization with Dichotomy started...\n";
-				opt.Optimize();
-				std::cout << "Optimization with Dichotomy finalized.\n";
-
-				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
-
-				std::cout << "******OverallOptimizer With Dichotomy test end*****\n\n";
-			}
-
 			static void testOverallOptimizerWithBicection()
 			{
 				std::cout << "******OverallOptimizer With Bicection test start*****\n";
 
 				OptimizerParams prm{ 0.001, 0.001, 101 };
 				ConcreteFunc::Function f{};
-				ConcreteOptimizer::Bisection Algo{ &f, {-2, 5} };
-				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, prm };
+				ConcreteState::StateBisection State{ SetOfPoints<2, Point<1>>{ {-2, 5} }, &f };
+
+				Optimizer<1, ConcreteState::StateBisection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
 				std::cout << "Optimization with Bicection started...\n";
-				opt.Optimize();
+				opt.Optimize<ConcreteOptimizer::Bisection>();
 				std::cout << "Optimization with Bicection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "Final guess is x = " << State.Guess() << '\n';
 
 				std::cout << "******OverallOptimizer With Bicection test end*******\n\n";
 			}
 
+
+			static void testDichotomy()
+			{
+				std::cout << "******Dichotomy test start*****\n";
+				ConcreteFunc::FunctionWithHess f{};
+				ConcreteState::StateDichotomy State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &f };
+
+				std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
+				for (int i = 0; i < 10; i++)
+				{
+					OptimizerInterface::OptimizerAlgorithm<1>::
+						Proceed<ConcreteOptimizer::Dichotomy, ConcreteState::StateDichotomy, FuncInterface::IFunc>(&State, &f);
+					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
+				}
+				std::cout << "******Dichotomy test end*******\n\n";
+			}
+			
+			static void testOverallOptimizerWithDichotomy()
+			{
+				std::cout << "******OverallOptimizer With Dichotomy test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 101 };
+				ConcreteFunc::Function f{};
+				ConcreteState::StateDichotomy State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }),& f };
+
+				Optimizer<1, ConcreteState::StateDichotomy, FuncInterface::IFunc> opt{ &State, &f, prm };
+
+
+				std::cout << "Optimization with Dichotomy started...\n";
+				opt.Optimize<ConcreteOptimizer::Dichotomy>();
+				std::cout << "Optimization with Dichotomy finalized.\n";
+
+				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+				std::cout << "Final guess is x = " << State.Guess() << '\n';
+
+				std::cout << "******OverallOptimizer With Dichotomy test end*****\n\n";
+			}
+			
 			static void testGoldenSection()
 			{
 				std::cout << "******GoldenSection test start*****\n";
-				ConcreteOptimizer::GoldenSection Algo{ new ConcreteFunc::FunctionWithHess{}, {-2, 5} };
-				std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+
+				ConcreteFunc::FunctionWithHess f{};
+				ConcreteState::StateGoldenSection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }),& f };
+				std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				for (int i = 0; i < 10; i++)
 				{
-					Algo.Proceed();
-					std::cout << "Current simplex is:\n" << "  " << Algo.GuessDomain() << "\n";
+					OptimizerInterface::OptimizerAlgorithm<1>::
+						Proceed<ConcreteOptimizer::GoldenSection, ConcreteState::StateGoldenSection, FuncInterface::IFunc>(&State, &f);
+					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				}
 				std::cout << "******GoldenSection test end*******\n\n";
 			}
 
-			static void testOverallOptimizer_WithGoldenSection()
+			static void testOverallOptimizerWithGoldenSection()
 			{
 				std::cout << "******OverallOptimizer With GoldenSection test start*****\n";
 
 				OptimizerParams prm{ 0.001, 0.001, 101 };
 				ConcreteFunc::Function f{};
-				ConcreteOptimizer::GoldenSection Algo{ &f, {-2, 5} };
-				Optimizer<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo, prm };
+				ConcreteState::StateGoldenSection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }),& f };
+
+				Optimizer<1, ConcreteState::StateGoldenSection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
 				std::cout << "Optimization with GoldenSection started...\n";
-				opt.Optimize();
+				opt.Optimize<ConcreteOptimizer::GoldenSection>();
 				std::cout << "Optimization with GoldenSection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "Final guess is x = " << State.Guess() << '\n';
 
 				std::cout << "******OverallOptimizer With GoldenSection test end*******\n\n";
 			}
+
+			static void testGrid()
+			{
+				std::cout << "******Grid test start*****\n";
+				ConcreteFunc::FunctionWithHess f{};
+				ConcreteState::StateGrid State{SetOfPoints<2, Point<1>>{ {-2, 5} }, &f, 100 };
+
+				std::cout << "Simplex is:\n" << "  " << State.GuessDomain() << "\n" << "n = " << State.n << "\n";
+
+				auto result = OptimizerInterface::OptimizerAlgorithm<1>::
+					Proceed<ConcreteOptimizer::Grid, ConcreteState::StateGrid, FuncInterface::IFunc>(&State, &f);
+
+				std::cout << "Result is: " << result << "\n";
+				std::cout << "******Grid test end*******\n\n";
+			}
+
+			static void testOverallOptimizerWithGrid()
+			{
+				std::cout << "******OverallOptimizer With Grid test start*****\n";
+
+				ConcreteFunc::Function f{};
+				ConcreteState::StateGrid State{ SetOfPoints<2, Point<1>>{ {-2, 5} }, &f, 200 };
+				Optimizer1Step<1, ConcreteState::StateGrid, FuncInterface::IFunc> opt{ &State, &f };
+
+				std::cout << "Optimization with Grid started...\n";
+				opt.Optimize<ConcreteOptimizer::Grid>();
+				std::cout << "Optimization with Grid finalized.\n";
+				std::cout << "Final guess is x = " << State.Guess() << '\n';
+				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
+			}
+
+			static void testOverallOptimizerWithNelderMead()
+			{
+				std::cout << "******OverallOptimizer With Nelder Mead test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 500 };
+				ConcreteFunc::Paraboloid2D f{ SetOfPoints<2,Point<2>>{ { {1,0}, {0,10}}} };
+				SetOfPoints<3, Point<2>> P{ { {0, -1}, { -1,1 }, { 1,1 } } };
+				ConcreteState::StateNelderMead<2> State{ std::move(P), &f, 1.0, 0.5, 2.0 };
+
+				/*ConcreteOptimizer::NelderMead<1> Algo{ &f, {-9, 9},1.0,0.5,2.0 };*/
+				Optimizer<2, ConcreteState::StateNelderMead<2>, FuncInterface::IFunc> opt{ &State, &f, prm };
+
+				std::cout << "Optimization with Nelder Mead started...\n";
+				opt.Optimize<ConcreteOptimizer::NelderMead<2>>();
+				std::cout << "Optimization with Nelder Mead finalized.\n";
+
+				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "******OverallOptimizer With Nelder Mead test end*******\n\n";
+			}
+
+
 			/*static void testDirect1DFuncAlongGrad()
 			{
 				std::cout << "******Optimization test start*****\n";
@@ -118,46 +186,6 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
-			static void testGrid()
-			{
-				std::cout << "******Grid test start*****\n";
-				ConcreteOptimizer::Grid Algo{ new ConcreteFunc::FunctionWithHess{}, {-15, 25} , 100 };
-				std::cout << "Simplex is:\n" << "  " << Algo.GuessDomain() << "\n" << "n = " << Algo.n << "\n";
-				std::cout << "Result is: " << Algo.Proceed() << "\n";
-				std::cout << "******Grid test end*******\n\n";
-			}
-			static void testOverallOptimizerWithGrid()
-			{
-				std::cout << "******OverallOptimizer With Grid test start*****\n";
-
-				ConcreteFunc::Function f{};
-				ConcreteOptimizer::Grid Algo{ &f, {-15, 25} ,5 };
-				Optimizer1Step<1, FuncInterface::IFunc<1>, ConcreteState::StateSegment> opt{ &Algo };
-
-				std::cout << "Optimization with Grid started...\n";
-				std::cout << "Optimization with Grid finalized.\n";
-				std::cout << "Final guess is x = " << opt.Optimize() << '\n';
-				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
-			}
-			static void testOverallOptimizerWithNelderMead()
-			{
-				std::cout << "******OverallOptimizer With Nelder Mead test start*****\n";
-
-				OptimizerParams prm{ 0.001, 0.001, 500 };
-				/*ConcreteFunc::Function f{};*/
-				ConcreteFunc::Paraboloid2D f{ SetOfPoints<2,Point<2>>{ { {1,0}, {0,10}}} };
-				ConcreteOptimizer::NelderMead<2> Algo{ &f, {{{0,-1}, {-1,1},{1,1}}},1.0,0.5,2.0 };
-				/*ConcreteOptimizer::NelderMead<1> Algo{ &f, {-9, 9},1.0,0.5,2.0 };*/
-				Optimizer<2, FuncInterface::IFunc<2>, ConcreteState::StateDirect<2>> opt{ &Algo, prm };
-
-				std::cout << "Optimization with Nelder Mead started...\n";
-				opt.Optimize();
-				std::cout << "Optimization with Nelder Mead finalized.\n";
-
-				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
-				std::cout << "******OverallOptimizer With Nelder Mead test end*******\n\n";
-			}
 		};
 
 	} // UnitTests

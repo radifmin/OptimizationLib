@@ -3,29 +3,40 @@
 
 namespace OptLib
 {
-	namespace ConcreteOptimizer
+	namespace ConcreteState
 	{
-		class Grid : public OptimizerInterface::ISegmentAlgo
+		/// <summary>
+		/// Simplexes for direct methods on segments (in 1D) must not be sorted with respect to f(x). Must be sorted with respect to x == x[0]
+		/// </summary>
+		class StateGrid : public StateSegment
 		{
 		public:
-			int n;
-			Grid(FuncInterface::IFunc<1>* f_pointer, SetOfPoints<2, Point<1>>&& setOfPoints, int n_):
-				OptimizerInterface::ISegmentAlgo(f_pointer,std::move(setOfPoints)),n{n_}{}
+			const int n;
+			StateGrid(SetOfPoints<2, Point<1>>&& State, FuncInterface::IFunc<1>* f, int n_) : StateSegment(std::move(State), f), n{ n_ }{};
 
-			virtual PointVal<1> Proceed() override
+			void SetGuess(const PointVal<1>& v) { ItsGuess = v; }
+		};
+	} // ConcreteOptimizer
+
+	namespace ConcreteOptimizer
+	{
+		class Grid 
+		{
+		public:
+			static PointVal<1> Proceed(ConcreteState::StateGrid& State, const FuncInterface::IFunc<1>* f)
 			{
-				double lengthOfStep = (State.GuessDomain().Points()[1][0] - State.GuessDomain().Points()[0][0])/ n;
+				int n = State.n;
+				Point<1> step = (State.GuessDomain().Points()[1] - State.GuessDomain().Points()[0]) / n;
 				PointVal<1> res = State.GuessDomain().Points()[0];
 				PointVal<1> currentPoint = res;
-				for(int i = 0; i < n; i++)
+				for(int i = 1; i < n; i++)
 				{
-					currentPoint = currentPoint + lengthOfStep;
-					currentPoint.Val = f->operator()(currentPoint);
+					currentPoint = PointVal<1>::CreateFromPoint(currentPoint.P + step, f);
 					if(currentPoint < res )
-					{
 						res = currentPoint;
-					}
 				}
+
+				State.SetGuess(res);
 				return res;
 			}
 		};
