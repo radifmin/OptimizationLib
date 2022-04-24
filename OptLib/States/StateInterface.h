@@ -16,7 +16,7 @@ namespace OptLib
 		public:
 			// concrete implementation depends on the order of optimization method
 			virtual bool IsConverged(double abs_tol, double rel_tol) const  = 0;
-			PointVal<dim> Guess() const { return ItsGuess; };
+			const PointVal<dim>& Guess() const { return ItsGuess; };
 		};
 
 		/// <summary>

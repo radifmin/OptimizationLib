@@ -186,6 +186,25 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
+			static void testOverallOptimizerWithNewton()
+			{
+				std::cout << "******OverallOptimizer With Newton test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 10 };
+				//ConcreteFunc::Paraboloid2D f{ SetOfPoints<5,Point<5>>{ { {1,1,1,0}, {0,1}}} };
+				ConcreteFunc::Himmel f{};
+				ConcreteState::StateNewton<2> State{ {3.8,2.3}, &f };
+
+				Optimizer<2, ConcreteState::StateNewton<2>, FuncInterface::IFuncWithHess> opt{ &State, &f, prm };
+
+				std::cout << "Optimization with Newton started...\n";
+				opt.Optimize<ConcreteOptimizer::Newton<2>>();
+				std::cout << "Optimization with Newton finalized.\n";
+
+				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "******OverallOptimizer With Newton test end*******\n\n";
+			}
 		};
 
 	} // UnitTests

@@ -497,6 +497,18 @@ namespace OptLib
 
 	template<size_t count, typename point>
 	using SetOfPoints = std::array<point, count>;
+
+	template<size_t dim>
+	Point<dim> operator* (const SetOfPoints<dim, Point<dim>>& A, const Point<dim>& B)
+	{
+		Point<dim> out;
+		for (int i = 0; i < dim; i++)
+		{
+			out[i] = dot_product(A[i], B);
+		}
+		return out;
+	}
+
 	template<size_t count, typename point>
 	std::ostream& operator<< (std::ostream& o, const SetOfPoints<count, point>& output)
 	{

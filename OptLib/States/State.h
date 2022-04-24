@@ -38,6 +38,26 @@ namespace OptLib
 		template<size_t dim>
 		class StatePoint : public StateInterface::IState<dim>
 		{
+		protected:
+			PointVal<dim> dx{};
+		public:
+			bool IsConverged(double abs_tol, double rel_tol) const override
+			{
+				auto& std = dx;
+				auto var{ abs<dim>(dx / Guess()) };
+				for (int i = 0; i < dim; i++)
+				{
+					bool f = (((std[i]) < abs_tol) || (var[i] < rel_tol)) && (((std.Val) < abs_tol) || (var.Val < rel_tol));
+					if (!f) return false;
+				}
+				return true;
+			}
+
+			void SetGuess(const PointVal<dim>& v)
+			{
+				dx = abs<dim>(v - Guess());
+				ItsGuess = v;
+			}
 
 		};
 
