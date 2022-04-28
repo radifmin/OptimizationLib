@@ -49,6 +49,7 @@ int main()
 	OptLib::UnitTests::testOptimizer::testGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNelderMead();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNewton();
 
 	// test regression
 

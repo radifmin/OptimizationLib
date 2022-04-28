@@ -208,6 +208,36 @@ namespace OptLib
 				return res;
 			}
 		};
+		class Himmel : public FuncInterface::IFuncWithHess<2>
+		{
+		public:
+			Himmel()
+			{
+#ifdef DEBUG_LIB
+				std::cout << "Himmel funcion  has been instantiated.\n";
+				std::cout << "f(3,2) = " << this->operator()(Point<2>{3, 2}) << '\n';
+				std::cout << "f(-2.805118,3.131312) = " << this->operator()(Point<2>{-2.805118, 3.131312}) << '\n';
+				std::cout << "f(-3.779310,-3.283186) = " << this->operator()(Point<2>{-3.779310, -3.283186}) << '\n';
+				std::cout << "f(3.584428,-1.848126) = " << this->operator()(Point<2>{3.584428, -1.848126}) << '\n';
+#endif // DEBUG_LIB
+			}
+			double operator() (const Point<2>& x) const override
+			{
+				return std::pow(x[0] * x[0] + x[1] - 11, 2) + std::pow(x[0] + x[1] * x[1] - 7, 2);
+			}
+
+			virtual Point<2> grad(const Point<2>& x) const override
+			{
+				return Point<2>{ {4 * x[0] * x[0] * x[0] + 4 * x[0] * x[1] - 42 * x[0] + 2 * x[1] * x[1] - 14, 2 * x[0] * x[0] - 22 + 4 * x[0] * x[1] + 4 * x[1] * x[1] * x[1] - 26 * x[1] } };
+			}
+
+			virtual Hess<2> hess(const Point<2>& x) const override
+			{
+				return Hess<2> { { {12 * x[0] * x[0] + 4 * x[1] - 42, 4 * x[0] + 4 * x[1]},
+					{ 4 * x[0] + 4 * x[1], 4 * x[0] + 12 * x[1] * x[1] - 26 }}
+				};
+			}
+		};
 
 	} // ConcreteFuncs
 
