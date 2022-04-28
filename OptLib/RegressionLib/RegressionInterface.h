@@ -73,15 +73,25 @@ namespace OptLib
 			class IRegression
 		{
 		protected:
-			OptimizerParams prm{ 0.001, 0.001, 101 };
+			OptimizerParams prm;
 			LType<dimX, dimP, funcP> LH; // Likelihood function
 			Point<dimP> Optimum;
+			double Val;
 
 		public:
-			IRegression(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer, OptAlgo* Algo,
+
+			IRegression(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer, SetOfPoints<dimP+1, Point<dimP>>&& Points,
 				OptimizerParams prm_ = OptimizerParams{ 0.001, 0.001, 101 }) 
 				:
-				prm{ prm_ }, LH{ std::move(data), f_pointer }, Optimum{ Algo->Optimize() }{}
+				prm{ prm_ }, LH{ std::move(data), f_pointer }, Optimum{ Algo->Optimize() }
+			{
+				ConcreteState::StateNelderMead<2> State{ std::move(P), &f, 1.0, 0.5, 2.0 };
+
+				Optimizer<2, ConcreteState::StateNelderMead<2>, FuncInterface::IFunc> opt{ &State, &LH, prm };
+				opt.Optimize<ConcreteOptimizer::NelderMead<2>>();
+				Optimum = State.Guess().P;
+				Val = State.Guess().Val;
+			}
 
 			double operator()(const Point<dimX>& x) { return LH.f->operator()(x, Optimum); }
 		};
