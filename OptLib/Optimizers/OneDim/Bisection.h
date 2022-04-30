@@ -102,4 +102,25 @@ namespace OptLib
 			}
 		};
 	} // Optimizer
+
+	namespace StateParams
+	{
+		struct BisectionParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::Bisection;
+			using StateType = ConcreteState::StateBisection;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			BisectionParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
+
 } // OptLib

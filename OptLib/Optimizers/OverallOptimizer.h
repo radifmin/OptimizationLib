@@ -31,15 +31,28 @@ namespace OptLib
 		template<typename algo>
 		PointVal<dim> Optimize()
 		{
+#ifdef DEBUG_LIB
+			std::cout << "Optimization started...\n";
+#endif // DEBUG_LIB
+
 			// TODO : separate thread
 			bool g = false;
 			while (!g &&
 				s < MaxIterCount())
 			{
+#ifdef DEBUG_LIB
+				std::cout << "Current state: " << State->Guess() << "\n";
+#endif // DEBUG_LIB
 				OptimizerInterface::OptimizerAlgorithm<dim>::Proceed<algo, state, func>(State, f);
 				s++;
 				g = OptimizerInterface::OptimizerAlgorithm<dim>::IsConverged(State, tol_x(), tol_x());
 			}
+#ifdef DEBUG_LIB
+			std::cout << "Optimization ended\n";
+			std::cout << "Total number of iterations is s = " << CurIterCount() << '\n';
+			std::cout << "Final guess is x = " << CurrentGuess() << '\n';
+#endif // DEBUG_LIB
+
 			return CurrentGuess();
 		}
 

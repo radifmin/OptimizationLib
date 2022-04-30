@@ -45,4 +45,24 @@ namespace OptLib
 			}
 		};
 	} // ConcreteOptimizer
+
+	namespace StateParams
+	{
+		struct DichotomyParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::Dichotomy;
+			using StateType = ConcreteState::StateDichotomy;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			DichotomyParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
 } // OptLib

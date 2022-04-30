@@ -13,7 +13,6 @@
 
 //namespace plt = matplotlibcpp;
 
-
 int main()
 {
 	/*std::vector<double> y = { 1, 3, 2, 4 };
@@ -57,6 +56,8 @@ int main()
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
 	OptLib::UnitTests::testLikelihood::LikelihoodMinimization();
+
+	OptLib::UnitTests::testRegression::testRegressionInterface();
 
 #endif // DEBUG_LIB
 }

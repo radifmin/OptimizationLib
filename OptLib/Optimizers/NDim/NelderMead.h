@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+
 namespace OptLib
 {
 	namespace ConcreteState
@@ -11,9 +12,9 @@ namespace OptLib
 		class StateNelderMead : public StateDirect<dim>
 		{
 		public:
-			double alpha;
-			double beta;
-			double gamma;
+			const double alpha;
+			const double beta;
+			const double gamma;
 
 		public:
 			StateNelderMead(SetOfPoints<dim+1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f,
@@ -97,4 +98,31 @@ namespace OptLib
 			}
 		};
 	}//ConcreteOptimizer
+
+	namespace StateParams
+	{
+		template< size_t dim>
+		struct NelderMeadParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::NelderMead<dim>;
+			using StateType = ConcreteState::StateNelderMead<dim>;
+
+		public:
+			SetOfPoints<dim + 1, Point<dim>> StartSimplex;
+			NelderMeadParams(SetOfPoints<dim+1, Point<dim>>&& sop, double alpha_, double beta_, double gamma_)
+				:StartSimplex{ std::move(sop) },
+				alpha{ alpha_ }, beta{ beta_ }, gamma{ gamma_ }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSimplex), f, alpha, beta, gamma };
+			}
+
+		protected:
+			double alpha;
+			double beta;
+			double gamma;
+		};
+	} // StateParams
 }//OptLib

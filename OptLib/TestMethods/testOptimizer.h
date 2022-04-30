@@ -13,13 +13,14 @@ namespace OptLib
 				std::cout << "******Bicection test start*****\n";
 
 				ConcreteFunc::FunctionWithHess f{};
-				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &f };
+				FunctWithCounter::ICounterFunc<1> fCounter{ &f };
+				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &fCounter };
 
 				std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				for (int i = 0; i < 10; i++)
 				{
 					OptimizerInterface::OptimizerAlgorithm<1>::
-						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &f);
+						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &fCounter);
 					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				}
 				std::cout << "******Bicection test end*******\n\n";
@@ -34,9 +35,7 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateBisection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-				std::cout << "Optimization with Bicection started...\n";
 				opt.Optimize<ConcreteOptimizer::Bisection>();
-				std::cout << "Optimization with Bicection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -71,10 +70,7 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateDichotomy, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-
-				std::cout << "Optimization with Dichotomy started...\n";
 				opt.Optimize<ConcreteOptimizer::Dichotomy>();
-				std::cout << "Optimization with Dichotomy finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -108,9 +104,7 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateGoldenSection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-				std::cout << "Optimization with GoldenSection started...\n";
 				opt.Optimize<ConcreteOptimizer::GoldenSection>();
-				std::cout << "Optimization with GoldenSection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -141,9 +135,8 @@ namespace OptLib
 				ConcreteState::StateGrid State{ SetOfPoints<2, Point<1>>{ {-2, 5} }, &f, 200 };
 				Optimizer1Step<1, ConcreteState::StateGrid, FuncInterface::IFunc> opt{ &State, &f };
 
-				std::cout << "Optimization with Grid started...\n";
 				opt.Optimize<ConcreteOptimizer::Grid>();
-				std::cout << "Optimization with Grid finalized.\n";
+
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
 				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
 			}
@@ -201,8 +194,8 @@ namespace OptLib
 				opt.Optimize<ConcreteOptimizer::Newton<2>>();
 				std::cout << "Optimization with Newton finalized.\n";
 
-				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
-				std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+		//		std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+		//		std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
 				std::cout << "******OverallOptimizer With Newton test end*******\n\n";
 			}
 		};

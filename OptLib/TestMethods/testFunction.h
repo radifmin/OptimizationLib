@@ -83,7 +83,7 @@ namespace OptLib
 			static void testParaboloidAlongDirection()
 			{
 				std::cout << "******Paraboloid along direction test start*****\n";
-				FuncInterface::IFuncWithGrad<2>* f = new ConcreteFunc::Paraboloid<2>{ { { { {1,2}} , { {4,1}} } } };
+				FuncInterface::IFuncWithGrad<2>* f = new ConcreteFunc::Paraboloid<2>{ { {  {1,2} , { 4,1}}  } };
 				Point<2> x{ {1,1} };
 
 

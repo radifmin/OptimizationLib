@@ -54,4 +54,24 @@ namespace OptLib
 			}
 		};
 	} // Optimizer
+
+	namespace StateParams
+	{
+		struct GoldenSectionParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::GoldenSection;
+			using StateType = ConcreteState::StateGoldenSection;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			GoldenSectionParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
 } // OptLib

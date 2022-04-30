@@ -41,4 +41,28 @@ namespace OptLib
 			}
 		};
 	} // Optimizer
+
+	namespace StateParams
+	{
+		struct GridParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::Grid;
+			using StateType = ConcreteState::StateGrid;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			GridParams(SetOfPoints<2, Point<1>>&& sop, int n)
+				:StartSegment{ std::move(sop) }, n{n}
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f, n };
+			}
+
+		protected:
+			const int n;
+		};
+	} // StateParams
+
 } // OptLib
