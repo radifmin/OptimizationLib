@@ -5,6 +5,17 @@ namespace OptLib
 {
 	namespace FuncInterface
 	{
+		template <size_t dim>
+		class IFunc;
+
+		template <size_t dim>
+		static PointVal<dim> CreateFromPoint(Point<dim>&& p, const IFunc<dim>* f)
+		{
+			PointVal<dim> out;
+			out.P = std::move(p);
+			out.Val = f->operator()(out.P);
+			return out;
+		}
 
 		template <size_t dim>
 		class IFunc

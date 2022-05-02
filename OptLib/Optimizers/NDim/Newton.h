@@ -11,10 +11,9 @@ namespace OptLib
 		public:
 			StateNewton(Point<dim>&& x0, const FuncInterface::IFuncWithHess<dim>* f)
 			{
-				ItsGuess = PointVal<dim>::CreateFromPoint(std::move(x0), f);
+				ItsGuess = FuncInterface::CreateFromPoint<dim>(std::move(x0), f);
 			}
 		};
-
 	} // ConcreteState
 
 	namespace ConcreteOptimizer
@@ -60,7 +59,7 @@ namespace OptLib
 				const auto& g = State.Guess();
 				Point<dim> dx{ GaussSolver(f->hess(g.P), -1* f->grad(g.P)) };
 
-				State.SetGuess(PointVal<dim>::CreateFromPoint(g.P + dx, f));
+				State.UpdateState(FuncInterface::CreateFromPoint<dim>(g.P + dx, f));
 				return State.Guess();
 			}
 		};

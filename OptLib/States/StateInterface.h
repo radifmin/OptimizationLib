@@ -42,25 +42,31 @@ namespace OptLib
 			simplex ItsGuessDomain; // the field is unique for direct optimization methods
 			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, const FuncInterface::IFunc<dim>* f) 
 			{
-				return f->operator()(State);
+				return (*f)(State);
 			}
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
+			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
-				ItsGuessDomain = simplex{ std::move(State), std::move(funcVals)};
-				ItsGuess = GuessDomain().Mean();
+				UpdateDomain(
+					simplex{ 
+						simplex::make_field(
+							std::move(State), 
+							std::move(funcVals)
+						) 
+					}
+				);
 			}
 		public:
 			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(State), f);
+				UpdateDomain(std::move(State), f);
 			}
 			const simplex& GuessDomain() const { return ItsGuessDomain; } // unique for direct optimization methods
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
+			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(State), std::move(FuncVals(State, f)));
+				UpdateDomain(std::move(State), std::move(FuncVals(State, f)));
 			}
 
-			void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
+			virtual void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
 			{
 				ItsGuessDomain = simplex{ std::move(newDomain) };
 				ItsGuess = GuessDomain().Mean();

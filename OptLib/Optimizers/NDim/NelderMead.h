@@ -48,15 +48,15 @@ namespace OptLib
 				Point<dim> XC = NewSimplex[0].P;
 				for (int i = 1; i < dim; i++)
 					XC = XC + NewSimplex[i].P;
-				PointVal<dim> xc{ PointVal<dim>::CreateFromPoint(std::move(XC / (dim - 0.0)), f) };
+				PointVal<dim> xc{ FuncInterface::CreateFromPoint<dim>(std::move(XC / (dim - 0.0)), f) };
 
 				// another auxillary point
-				PointVal<dim> xr{ PointVal<dim>::CreateFromPoint(std::move(xc.P * (1.0 + alpha) - xh.P * alpha), f) };
+				PointVal<dim> xr{ FuncInterface::CreateFromPoint<dim>(std::move(xc.P * (1.0 + alpha) - xh.P * alpha), f) };
 
 				if (xr.Val < xl.Val)
 				{
 					// try to slightly improve the xr value calculating xe
-					PointVal<dim> xe{ PointVal<dim>::CreateFromPoint(std::move(xc * (1.0 - gamma) + xr * gamma), f) };
+					PointVal<dim> xe{ FuncInterface::CreateFromPoint<dim>(std::move(xc * (1.0 - gamma) + xr * gamma), f) };
 					if (xe.Val < xr.Val)
 						xh = xe;
 					else
@@ -74,7 +74,7 @@ namespace OptLib
 
 				if (xr.Val < xh.Val) xh = xr; // std::swap(xr, xh);
 
-				PointVal<dim> xs{ PointVal<dim>::CreateFromPoint(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
+				PointVal<dim> xs{ FuncInterface::CreateFromPoint<dim>(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
 				if (xs.Val < xh.Val)
 				{
 					xh = xs;
@@ -82,7 +82,7 @@ namespace OptLib
 					return State.Guess();
 				}
 
-				State.SetDomain(SqueezeSimplex(xl.P, NewSimplex), f);
+				State.UpdateDomain(SqueezeSimplex(xl.P, NewSimplex), f);
 				return State.Guess();
 				}
 			    

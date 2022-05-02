@@ -53,7 +53,7 @@ namespace OptLib
 				return true;
 			}
 
-			void SetGuess(const PointVal<dim>& v)
+			virtual void UpdateState(const PointVal<dim>& v)
 			{
 				dx = abs<dim>(v - Guess());
 				ItsGuess = v;

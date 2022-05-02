@@ -26,8 +26,8 @@ namespace OptLib
 
 				Point<1> c{ State.GuessDomain().Mean().P };
 
-				PointVal<1> x1{ PointVal<1>::CreateFromPoint(c - _e, f) };
-				PointVal<1> x2{ PointVal<1>::CreateFromPoint(c + _e, f) };
+				PointVal<1> x1{ FuncInterface::CreateFromPoint<1>(c - _e, f) };
+				PointVal<1> x2{ FuncInterface::CreateFromPoint<1>(c + _e, f) };
 
 				SetOfPoints<2, PointVal<1>> newSet;
 				if (x1.Val < x2.Val)

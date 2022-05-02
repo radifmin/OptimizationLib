@@ -32,6 +32,7 @@
 
 #include "OptLib/States/StateInterface.h"
 #include "OptLib/States/State.h"
+#include "OptLib/States/ImprovedState.h"
 
 #include "OptLib/Optimizers/OptimizerInterface.h"
 #include "OptLib/Optimizers/OneDim/Bisection.h"

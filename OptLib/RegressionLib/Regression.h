@@ -53,7 +53,7 @@ namespace OptLib
 		};
 
 		/// <summary>
-		/// Operations for log-logistic regression
+		/// Operations for Log of logistic regression, where Log(Prod(.)) is a Sum(Log(.))
 		/// </summary>
 		struct LogLogistic : public Logistic
 		{

@@ -35,6 +35,7 @@ int main()
 	// test states
 	OptLib::UnitTests::testState::testStateDirect();
 	OptLib::UnitTests::testState::testStateSegment();
+	OptLib::UnitTests::testState::testStatePointImproved();
 	//OptLib::UnitTests::testState::testStatePoint(); // TODO
 	//OptLib::UnitTests::testState::testStateStochastic(); // TODO
 

@@ -90,12 +90,14 @@ namespace OptLib
 		{
 			static void testRegressionInterface()
 			{
+				using namespace FuncParamInterface;
 				using namespace ConcreteFuncParam;
+				using namespace FunctWithCounter;
 
 				SetOfPoints<2, Point<1>> Points{ {1.0, 3.5} };
 				Point<1> a{ 2.5438 };
 				LinearFunc f{};
-				FunctWithCounter::ICounterFuncParam<1,1> FCounter{ &f };
+				ICounterFuncParam<1,1> FCounter{ &f };
 
 				RegInterface::DataSet<1> Data{ testLikelihood::GenerateDataSet(a, &f) };
 
@@ -109,7 +111,7 @@ namespace OptLib
 				fCounter = FCounter;
 				StateParams::DichotomyParams par{ std::move(points) };
 
-				RegInterface::IRegression<1, 1, FuncParamInterface::IFuncParam<1, 1>,
+				RegInterface::IRegression<1, 1, IFuncParam<1, 1>,
 					ConcreteReg::LikelihoodLinear,
 					StateParams::DichotomyParams> reg{ std::move(data), &fCounter, par };
 				std::cout << "Overall function calls count: " << fCounter.Counter / (float)testLikelihood::nrolls << '\n';
@@ -123,7 +125,7 @@ namespace OptLib
 				fCounter = FCounter;
 				StateParams::NelderMeadParams<1> par0{ std::move(points), 1.0, 0.5, 2.0 };
 
-				RegInterface::IRegression<1, 1, FuncParamInterface::IFuncParam<1, 1>,
+				RegInterface::IRegression<1, 1, IFuncParam<1, 1>,
 					ConcreteReg::LikelihoodLinear,
 					StateParams::NelderMeadParams<1>> reg0{ std::move(data), &fCounter, par0 };
 				std::cout << "Overall function calls count: " << fCounter.Counter / (float)testLikelihood::nrolls << '\n';

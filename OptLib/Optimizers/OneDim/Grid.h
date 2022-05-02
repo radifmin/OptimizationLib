@@ -31,7 +31,7 @@ namespace OptLib
 				PointVal<1> currentPoint = res;
 				for(int i = 1; i < n; i++)
 				{
-					currentPoint = PointVal<1>::CreateFromPoint(currentPoint.P + step, f);
+					currentPoint = FuncInterface::CreateFromPoint<1>(currentPoint.P + step, f);
 					if(currentPoint < res )
 						res = currentPoint;
 				}

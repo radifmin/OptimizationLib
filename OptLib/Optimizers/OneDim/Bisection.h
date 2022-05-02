@@ -85,9 +85,9 @@ namespace OptLib
 
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 				Point<1> x{ AuxPoints[0].P[0] + step };
-				AuxPoints[1] = PointVal{ x, f->operator()(x) };
+				AuxPoints[1] = PointVal{ x, (*f)(x) };
 				x = Point<1>{ AuxPoints[2].P[0] + step };
-				AuxPoints[3] = PointVal{ x, f->operator()(x) };
+				AuxPoints[3] = PointVal{ x, (*f)(x) };
 			}
 			static void temp2(ConcreteState::StateBisection& State, const FuncInterface::IFunc<1>* f)
 			{
@@ -97,7 +97,7 @@ namespace OptLib
 				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal{ x, f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, (*f)(x) };
 				}
 			}
 		};
@@ -109,7 +109,7 @@ namespace OptLib
 		{
 		public:
 			using OptAlgo = OptLib::ConcreteOptimizer::Bisection;
-			using StateType = ConcreteState::StateBisection;
+			using StateType = OptLib::ConcreteState::StateBisection;
 
 		public:
 			SetOfPoints<2, Point<1>> StartSegment;

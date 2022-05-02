@@ -20,7 +20,7 @@ namespace OptLib
 				std::cout << "The state simplex is     " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 
-				State.SetDomain({ {{0.0,0.3},{2.0,1.5},{1.0,2.0}} }, &f);
+				State.UpdateDomain({ {{0.0,0.3},{2.0,1.5},{1.0,2.0}} }, &f);
 				std::cout << "The new state simplex is " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 
@@ -37,11 +37,25 @@ namespace OptLib
 				std::cout << "The state simplex is     " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 				
-				State.SetDomain({ -7,2.0 }, &f);
+				State.UpdateDomain({ -7,2.0 }, &f);
 				std::cout << "The new state simplex is " << State.GuessDomain() << "\n";
 				std::cout << "The state is converged:  " << State.IsConverged(0.01, 0.01) << "\n";
 
 				std::cout << "******StateSegment test end*******\n\n";
+			}
+
+			static void testStatePointImproved()
+			{
+
+				SetOfPoints<2, Point<2>> matrix{ { { {1,2}} , { {4,1}} } };
+				ConcreteFunc::Paraboloid<2> f{ matrix };
+
+				Point<2> x{ 0.0, 0.0 }, y;
+				y = x + Point<2>{0.1, 0.1};
+				ConcreteState::StateNewton<2> State{ std::move(x) , &f};
+
+				StateWithMemory::StatePointImproved<2> mState{ &State };
+				mState.UpdateState(FuncInterface::CreateFromPoint<2>(std::move(y), &f));
 			}
 		};
 	} // UnitTests
