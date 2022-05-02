@@ -584,6 +584,13 @@ namespace OptLib
 			RawSetOfPoints<count, pointval>{ std::move(_s) } { }
 		SetOfPointVal(SetOfPoints<count, point>&& _s, std::array<double, count>&& funcVals) : // transforms points to points with vals
 			SetOfPointVal<count, point, pointval>{ std::move(make_field(std::move(_s), std::move(funcVals))) } {}
+		SetOfPoints<count, point> PointsNoVal() const
+		{
+			SetOfPoints<count, point> out{};
+			for (int i = 0; i < count; i++)
+				out[i] = Points()[i].P;
+			return out;
+		}
 	};
 
 	/// <summary>

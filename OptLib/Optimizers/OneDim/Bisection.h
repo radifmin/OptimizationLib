@@ -74,7 +74,7 @@ namespace OptLib
 				//	AuxPoints[4] = AuxPoints[4];
 					temp1(State, f);
 				}
-				State.UpdateDomain({ AuxPoints[0], AuxPoints[4]});
+				State.SetDomain({ AuxPoints[0], AuxPoints[4]});
 				return State.Guess();
 			}
 

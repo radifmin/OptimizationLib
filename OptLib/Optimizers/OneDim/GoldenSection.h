@@ -49,7 +49,7 @@ namespace OptLib
 					AuxPoints[1] = AuxPoints[2];
 					AuxPoints[2] = FuncInterface::CreateFromPoint<1>(AuxPoints[3].P - State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 				}
-				State.UpdateDomain({ AuxPoints[0], AuxPoints[3] });
+				State.SetDomain({ AuxPoints[0], AuxPoints[3] });
 				return State.Guess();
 			}
 		};

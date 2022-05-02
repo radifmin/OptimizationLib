@@ -26,7 +26,7 @@ namespace OptLib
 		class IStateSimplex : public StateInterface::IState<dim>
 		{
 		public: // overriden from predecessor
-			virtual bool IsConverged(double abs_tol, double rel_tol) const override
+			bool IsConverged(double abs_tol, double rel_tol) const override
 			{// is average and relative tolerance met?
 				auto [avg, disp] = GuessDomain().Dispersion();
 				auto [var,std]{ VarCoef<PointVal<dim>>(avg, disp) };
@@ -46,7 +46,7 @@ namespace OptLib
 			}
 			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
-				UpdateDomain(
+				SetDomain(
 					simplex{ 
 						simplex::make_field(
 							std::move(State), 
@@ -56,19 +56,26 @@ namespace OptLib
 				);
 			}
 		public:
+			IStateSimplex() {}
+			/*IStateSimplex(const SetOfPoints<dim + 1, Point<dim>>& State, FuncInterface::IFunc<dim>* f)
+			{
+				auto s{ State };
+				UpdateDomain(std::move(s), f);
+			}*/
 			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
 			{
 				UpdateDomain(std::move(State), f);
 			}
 			const simplex& GuessDomain() const { return ItsGuessDomain; } // unique for direct optimization methods
+			
 			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
 			{
 				UpdateDomain(std::move(State), std::move(FuncVals(State, f)));
 			}
-
-			virtual void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
+			virtual void SetDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
 			{
 				ItsGuessDomain = simplex{ std::move(newDomain) };
+
 				ItsGuess = GuessDomain().Mean();
 			}
 		};

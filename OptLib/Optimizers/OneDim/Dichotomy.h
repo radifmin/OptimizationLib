@@ -40,7 +40,7 @@ namespace OptLib
 					newSet[0] = x1;
 					newSet[1] = b;
 				}
-				State.UpdateDomain(std::move(newSet));
+				State.SetDomain(std::move(newSet));
 				return State.Guess();
 			}
 		};

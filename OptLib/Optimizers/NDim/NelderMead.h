@@ -61,14 +61,14 @@ namespace OptLib
 						xh = xe;
 					else
 						xh = xr;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 
 				if (xr.Val < xg.Val)
 				{
 					xh = xr;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 
@@ -78,7 +78,7 @@ namespace OptLib
 				if (xs.Val < xh.Val)
 				{
 					xh = xs;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 

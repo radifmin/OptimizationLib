@@ -5,34 +5,33 @@ namespace OptLib
 {
 	namespace StateWithMemory
 	{
-		template<size_t dim,  typename state>
+		template<size_t dim,  typename state = StateInterface::IStateSimplex<dim, SimplexValSort<dim>>>
 		class StateSimplexMemory : public state
 		{
 			state* State;
 
 		public:
-			StateSimplexMemory(state* State) : State{ State } 
+			StateSimplexMemory(state* State, FuncInterface::IFunc<dim>* f) : 
+				state(std::move((*State).GuessDomain().PointsNoVal()), f), 
+				State{ State }
 			{
-				a_Memory.push_back(*State); // copies ipdated state to a memory
+				a_Memory.push_back(*State); // copies current state to a memory
 			}
 			const std::vector<state>& Memory() { return a_Memory; }
 
-			void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain) override
+			void SetDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain) override
 			{
-				a_Memory.push_back(*State); // copies ipdated state to a memory
-				(*State).UpdateDomain(std::move(newDomain));
-			}
-
-			bool IsConverged(double abs_tol, double rel_tol) const override
-			{
-				return (*State).IsConverged(abs_tol, rel_tol);
+				(*State).SetDomain(std::move(newDomain));
+				a_Memory.push_back(*State); // copies updated state to a memory
 			}
 
 		protected:
 			std::vector<state> a_Memory;
 		};
 
-
+		/// <summary>
+		/// A State that memorizes all its previous states for StatePoint
+		/// </summary>
 		template<size_t dim>
 		class StatePointImproved : public ConcreteState::StatePoint<dim>
 		{
@@ -41,13 +40,13 @@ namespace OptLib
 		public:
 			StatePointImproved(ConcreteState::StatePoint<dim>* State) : State{ State }
 			{
-				a_Memory.push_back(new ConcreteState::StatePoint<dim>(*State)); // copies ipdated state to a memory
+				a_Memory.push_back(new ConcreteState::StatePoint<dim>(*State)); // copies current state to a memory
 			}
 
 			void UpdateState(const PointVal<dim>& v) override
 			{
 				(*State).UpdateState(v);
-				a_Memory.push_back(new ConcreteState::StatePoint<dim>(*State));
+				a_Memory.push_back(new ConcreteState::StatePoint<dim>(*State)); // copies updated state to a memory
 			}
 
 			const std::vector<ConcreteState::StatePoint<dim>*>& Memory() { return a_Memory; }
