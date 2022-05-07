@@ -239,6 +239,34 @@ namespace OptLib
 			}
 		};
 
+		class Rozenbrok : public FuncInterface::IFuncWithHess<2>
+		{
+		public:
+			Rozenbrok()
+			{
+#ifdef DEBUG_LIB
+				std::cout << "Rozenbrok funcion has been instantiated.\n";
+				std::cout << "f(1,1) = " << this->operator()(Point<2>{1, 1}) << '\n';
+#endif // DEBUG_LIB
+			}
+			double operator() (const Point<2>& x) const override
+			{
+				return std::pow((1 - x[0]), 2) + 100 * std::pow(x[1] - x[0] * x[0], 2);
+			}
+
+			virtual Point<2> grad(const Point<2>& x) const override
+			{
+				return Point<2>{ {-2 * x[0] * (1 - x[0] + 200 * (x[1] - x[0] * x[0])), 200 * (x[1] - x[0] * x[0])} };
+			}
+
+			virtual Hess<2> hess(const Point<2>& x) const override
+			{
+				return Hess<2> { { {-2 * (1 - x[0] + 200 * (x[1] - x[0] * x[0])) - 2 * x[0] * (-1 - 400 * x[0]),
+					-400 * x[0]},{ -400 * x[0], 200 }}
+				};
+			}
+		};
+
 	} // ConcreteFuncs
 
 } // OptLib

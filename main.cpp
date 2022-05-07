@@ -31,6 +31,7 @@ int main()
 	OptLib::UnitTests::testFunction::test2DWithHessNoGrad();
 	OptLib::UnitTests::testFunction::testParaboloid();
 	OptLib::UnitTests::testFunction::testParaboloidAlongDirection();
+	OptLib::UnitTests::testFunction::testRozebrok();
 
 	// test states
 	OptLib::UnitTests::testState::testStateDirect();

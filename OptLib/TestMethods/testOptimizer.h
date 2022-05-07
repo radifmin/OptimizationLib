@@ -185,8 +185,8 @@ namespace OptLib
 
 				OptimizerParams prm{ 0.001, 0.001, 10 };
 				//ConcreteFunc::Paraboloid2D f{ SetOfPoints<5,Point<5>>{ { {1,1,1,0}, {0,1}}} };
-				ConcreteFunc::Himmel f{};
-				ConcreteState::StateNewton<2> State{ {3.8,2.3}, &f };
+				ConcreteFunc::Rozenbrok f{};
+				ConcreteState::StateNewton<2> State{ {3.8,0.3}, &f };
 
 				Optimizer<2, ConcreteState::StateNewton<2>, FuncInterface::IFuncWithHess> opt{ &State, &f, prm };
 

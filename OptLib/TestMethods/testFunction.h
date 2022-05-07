@@ -95,6 +95,20 @@ namespace OptLib
 
 				std::cout << "******Paraboloid along direction test end*******\n\n";
 			}
+
+			static void testRozebrok()
+			{
+				std::cout << "******Rozebrok function test start*****\n";
+
+				//SetOfPoints<2, Point<2>> matrix{ { RawPoint<2>{ {1,2}} , RawPoint<2>{ {4,1}} } };
+				ConcreteFunc::Rozenbrok f{};
+				Point<2> x{ { 1,1 } };
+				std::cout << "It's value at x = " << x << " is f = " << f(x) << "\n";
+				std::cout << "It's gradient is " << " grad[ f ] = " << f.grad(x) << "\n";
+				std::cout << "It's hessian is  " << " hess[ f ] = " << f.hess(x) << "\n";
+
+				std::cout << "******Rozebrok function test end*******\n\n";
+			}
 		};
 	} // UnitTests
 } // OptLib
