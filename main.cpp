@@ -13,7 +13,6 @@
 
 //namespace plt = matplotlibcpp;
 
-
 int main()
 {
 	/*std::vector<double> y = { 1, 3, 2, 4 };
@@ -32,10 +31,13 @@ int main()
 	OptLib::UnitTests::testFunction::test2DWithHessNoGrad();
 	OptLib::UnitTests::testFunction::testParaboloid();
 	OptLib::UnitTests::testFunction::testParaboloidAlongDirection();
+	OptLib::UnitTests::testFunction::testRozebrok();
 
 	// test states
 	OptLib::UnitTests::testState::testStateDirect();
 	OptLib::UnitTests::testState::testStateSegment();
+	OptLib::UnitTests::testState::testStatePointImproved();
+	OptLib::UnitTests::testState::testStateSimplexImproved();
 	//OptLib::UnitTests::testState::testStatePoint(); // TODO
 	//OptLib::UnitTests::testState::testStateStochastic(); // TODO
 
@@ -49,6 +51,7 @@ int main()
 	OptLib::UnitTests::testOptimizer::testGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithGrid();
 	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNelderMead();
+	OptLib::UnitTests::testOptimizer::testOverallOptimizerWithNewton();
 
 	// test regression
 
@@ -56,6 +59,8 @@ int main()
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinear();
 	OptLib::UnitTests::testLikelihood::testLikelihoodLinearWithGrad();
 	OptLib::UnitTests::testLikelihood::LikelihoodMinimization();
+
+	OptLib::UnitTests::testRegression::testRegressionInterface();
 
 #endif // DEBUG_LIB
 }

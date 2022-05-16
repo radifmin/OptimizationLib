@@ -74,7 +74,7 @@ namespace OptLib
 				//	AuxPoints[4] = AuxPoints[4];
 					temp1(State, f);
 				}
-				State.UpdateDomain({ AuxPoints[0], AuxPoints[4]});
+				State.SetDomain({ AuxPoints[0], AuxPoints[4]});
 				return State.Guess();
 			}
 
@@ -85,9 +85,9 @@ namespace OptLib
 
 				double step = (AuxPoints[4].P[0] - AuxPoints[0].P[0]) / 4.0;
 				Point<1> x{ AuxPoints[0].P[0] + step };
-				AuxPoints[1] = PointVal{ x, f->operator()(x) };
+				AuxPoints[1] = PointVal{ x, (*f)(x) };
 				x = Point<1>{ AuxPoints[2].P[0] + step };
-				AuxPoints[3] = PointVal{ x, f->operator()(x) };
+				AuxPoints[3] = PointVal{ x, (*f)(x) };
 			}
 			static void temp2(ConcreteState::StateBisection& State, const FuncInterface::IFunc<1>* f)
 			{
@@ -97,9 +97,30 @@ namespace OptLib
 				for (size_t i = 1; i < 4; i++)
 				{
 					Point<1> x{ AuxPoints[i - 1].P[0] + step };
-					AuxPoints[i] = PointVal{ x, f->operator()(x) };
+					AuxPoints[i] = PointVal{ x, (*f)(x) };
 				}
 			}
 		};
 	} // Optimizer
+
+	namespace StateParams
+	{
+		struct BisectionParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::Bisection;
+			using StateType = OptLib::ConcreteState::StateBisection;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			BisectionParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
+
 } // OptLib

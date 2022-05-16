@@ -13,13 +13,14 @@ namespace OptLib
 				std::cout << "******Bisection test start*****\n";
 
 				ConcreteFunc::FunctionWithHess f{};
-				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &f };
+				FunctWithCounter::ICounterFunc<1> fCounter{ &f };
+				ConcreteState::StateBisection State{ std::move(SetOfPoints<2, Point<1>>{ {-2, 5} }), &fCounter };
 
 				std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				for (int i = 0; i < 10; i++)
 				{
 					OptimizerInterface::OptimizerAlgorithm<1>::
-						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &f);
+						Proceed<ConcreteOptimizer::Bisection, ConcreteState::StateBisection, FuncInterface::IFunc>(&State, &fCounter);
 					std::cout << "Current simplex is:\n" << "  " << State.GuessDomain() << "\n";
 				}
 				std::cout << "******Bisection test end*******\n\n";
@@ -34,9 +35,9 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateBisection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-				std::cout << "Optimization with Bisection started...\n";
+				std::cout << "Optimization with Bicection started...\n";
 				opt.Optimize<ConcreteOptimizer::Bisection>();
-				std::cout << "Optimization with Bisection finalized.\n";
+				std::cout << "Optimization with Bicection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -71,10 +72,7 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateDichotomy, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-
-				std::cout << "Optimization with Dichotomy started...\n";
 				opt.Optimize<ConcreteOptimizer::Dichotomy>();
-				std::cout << "Optimization with Dichotomy finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -108,9 +106,7 @@ namespace OptLib
 
 				Optimizer<1, ConcreteState::StateGoldenSection, FuncInterface::IFunc> opt{ &State, &f, prm };
 
-				std::cout << "Optimization with GoldenSection started...\n";
 				opt.Optimize<ConcreteOptimizer::GoldenSection>();
-				std::cout << "Optimization with GoldenSection finalized.\n";
 
 				std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
@@ -141,9 +137,8 @@ namespace OptLib
 				ConcreteState::StateGrid State{ SetOfPoints<2, Point<1>>{ {-2, 5} }, &f, 200 };
 				Optimizer1Step<1, ConcreteState::StateGrid, FuncInterface::IFunc> opt{ &State, &f };
 
-				std::cout << "Optimization with Grid started...\n";
 				opt.Optimize<ConcreteOptimizer::Grid>();
-				std::cout << "Optimization with Grid finalized.\n";
+
 				std::cout << "Final guess is x = " << State.Guess() << '\n';
 				std::cout << "******OverallOptimizer With Grid test end*******\n\n";
 			}
@@ -186,6 +181,25 @@ namespace OptLib
 				std::cout << "Iter count is:\n" << "  " << Optimizer.cur_iter_count() << "\n";
 				std::cout << "****** Optimization test end*******\n\n";
 			}*/
+			static void testOverallOptimizerWithNewton()
+			{
+				std::cout << "******OverallOptimizer With Newton test start*****\n";
+
+				OptimizerParams prm{ 0.001, 0.001, 10 };
+				//ConcreteFunc::Paraboloid2D f{ SetOfPoints<5,Point<5>>{ { {1,1,1,0}, {0,1}}} };
+				ConcreteFunc::Rozenbrok f{};
+				ConcreteState::StateNewton<2> State{ {3.8,0.3}, &f };
+
+				Optimizer<2, ConcreteState::StateNewton<2>, FuncInterface::IFuncWithHess> opt{ &State, &f, prm };
+
+				std::cout << "Optimization with Newton started...\n";
+				opt.Optimize<ConcreteOptimizer::Newton<2>>();
+				std::cout << "Optimization with Newton finalized.\n";
+
+		//		std::cout << "Total number of iterations is s = " << opt.CurIterCount() << '\n';
+		//		std::cout << "Final guess is x = " << opt.CurrentGuess() << '\n';
+				std::cout << "******OverallOptimizer With Newton test end*******\n\n";
+			}
 		};
 
 	} // UnitTests

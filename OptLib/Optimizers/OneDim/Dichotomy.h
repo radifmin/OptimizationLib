@@ -26,8 +26,8 @@ namespace OptLib
 
 				Point<1> c{ State.GuessDomain().Mean().P };
 
-				PointVal<1> x1{ PointVal<1>::CreateFromPoint(c - _e, f) };
-				PointVal<1> x2{ PointVal<1>::CreateFromPoint(c + _e, f) };
+				PointVal<1> x1{ FuncInterface::CreateFromPoint<1>(c - _e, f) };
+				PointVal<1> x2{ FuncInterface::CreateFromPoint<1>(c + _e, f) };
 
 				SetOfPoints<2, PointVal<1>> newSet;
 				if (x1.Val < x2.Val)
@@ -40,9 +40,29 @@ namespace OptLib
 					newSet[0] = x1;
 					newSet[1] = b;
 				}
-				State.UpdateDomain(std::move(newSet));
+				State.SetDomain(std::move(newSet));
 				return State.Guess();
 			}
 		};
 	} // ConcreteOptimizer
+
+	namespace StateParams
+	{
+		struct DichotomyParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::Dichotomy;
+			using StateType = ConcreteState::StateDichotomy;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			DichotomyParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
 } // OptLib

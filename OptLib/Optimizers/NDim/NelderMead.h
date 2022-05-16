@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+
 namespace OptLib
 {
 	namespace ConcreteState
@@ -11,9 +12,9 @@ namespace OptLib
 		class StateNelderMead : public StateDirect<dim>
 		{
 		public:
-			double alpha;
-			double beta;
-			double gamma;
+			const double alpha;
+			const double beta;
+			const double gamma;
 
 		public:
 			StateNelderMead(SetOfPoints<dim+1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f,
@@ -47,41 +48,41 @@ namespace OptLib
 				Point<dim> XC = NewSimplex[0].P;
 				for (int i = 1; i < dim; i++)
 					XC = XC + NewSimplex[i].P;
-				PointVal<dim> xc{ PointVal<dim>::CreateFromPoint(std::move(XC / (dim - 0.0)), f) };
+				PointVal<dim> xc{ FuncInterface::CreateFromPoint<dim>(std::move(XC / (dim - 0.0)), f) };
 
 				// another auxillary point
-				PointVal<dim> xr{ PointVal<dim>::CreateFromPoint(std::move(xc.P * (1.0 + alpha) - xh.P * alpha), f) };
+				PointVal<dim> xr{ FuncInterface::CreateFromPoint<dim>(std::move(xc.P * (1.0 + alpha) - xh.P * alpha), f) };
 
 				if (xr.Val < xl.Val)
 				{
 					// try to slightly improve the xr value calculating xe
-					PointVal<dim> xe{ PointVal<dim>::CreateFromPoint(std::move(xc * (1.0 - gamma) + xr * gamma), f) };
+					PointVal<dim> xe{ FuncInterface::CreateFromPoint<dim>(std::move(xc * (1.0 - gamma) + xr * gamma), f) };
 					if (xe.Val < xr.Val)
 						xh = xe;
 					else
 						xh = xr;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 
 				if (xr.Val < xg.Val)
 				{
 					xh = xr;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 
 				if (xr.Val < xh.Val) xh = xr; // std::swap(xr, xh);
 
-				PointVal<dim> xs{ PointVal<dim>::CreateFromPoint(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
+				PointVal<dim> xs{ FuncInterface::CreateFromPoint<dim>(std::move(xh.P * beta + xc.P * (1 - beta)), f) };
 				if (xs.Val < xh.Val)
 				{
 					xh = xs;
-					State.UpdateDomain(std::move(NewSimplex));
+					State.SetDomain(std::move(NewSimplex));
 					return State.Guess();
 				}
 
-				State.SetDomain(SqueezeSimplex(xl.P, NewSimplex), f);
+				State.UpdateDomain(SqueezeSimplex(xl.P, NewSimplex), f);
 				return State.Guess();
 				}
 			    
@@ -97,4 +98,31 @@ namespace OptLib
 			}
 		};
 	}//ConcreteOptimizer
+
+	namespace StateParams
+	{
+		template< size_t dim>
+		struct NelderMeadParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::NelderMead<dim>;
+			using StateType = ConcreteState::StateNelderMead<dim>;
+
+		public:
+			SetOfPoints<dim + 1, Point<dim>> StartSimplex;
+			NelderMeadParams(SetOfPoints<dim+1, Point<dim>>&& sop, double alpha_, double beta_, double gamma_)
+				:StartSimplex{ std::move(sop) },
+				alpha{ alpha_ }, beta{ beta_ }, gamma{ gamma_ }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSimplex), f, alpha, beta, gamma };
+			}
+
+		protected:
+			double alpha;
+			double beta;
+			double gamma;
+		};
+	} // StateParams
 }//OptLib

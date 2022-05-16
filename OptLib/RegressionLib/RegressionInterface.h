@@ -11,18 +11,18 @@ namespace OptLib
 		template<size_t dimX, template<size_t dimX> typename point = PointVal>
 		using DataSet = std::vector<point<dimX>>;
 
-		template<size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP, typename bin_op>
+		template<size_t dimX, size_t dimP, typename funcP, typename bin_op>
 		class ILikelihoodFunc : public FuncInterface::IFunc<dimP>
 		{
 		public:
-			const funcP<dimX, dimP>* f;
+			const funcP* f;
 			const bin_op op;
 		protected:
 
 		public:
 			const DataSet<dimX> Data;
 
-			ILikelihoodFunc(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer) : Data{ std::move(data) }, f{ f_pointer } {}
+			ILikelihoodFunc(DataSet<dimX>&& data, funcP* f_pointer) : Data{ std::move(data) }, f{ f_pointer } {}
 
 			double operator() (const Point<dimP>& a) const override
 			{
@@ -34,16 +34,16 @@ namespace OptLib
 		};
 
 		template<size_t dimX, size_t dimP, 
-			template <size_t dimX, size_t dimP> typename funcP, 
-			template < size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP > typename concreteReg>
+			typename funcP, 
+			template < size_t dimX, size_t dimP, typename funcP > typename concreteReg>
 		class ILikelihoodFuncWithGrad : public FuncInterface::IFuncWithGrad<dimP>
 		{
 		public:
 			const concreteReg<dimX, dimP, funcP>& L;
 			const DataSet<dimX>& Data = L.Data;
-			const funcP<dimX, dimP>& f = *(L.f);
+			const funcP& f = *(L.f);
 
-			ILikelihoodFuncWithGrad(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer) :
+			ILikelihoodFuncWithGrad(DataSet<dimX>&& data, funcP* f_pointer) :
 				L{ concreteReg< dimX, dimP, funcP>(std::move(data), f_pointer) } {}
 
 			double operator() (const Point<dimP>& a) const override { return L(a); }
@@ -66,24 +66,44 @@ namespace OptLib
 		/// func template --- smotthness of Likelihood function
 		/// </summary>
 		template<size_t dimX, size_t dimP, // dimension of X, dimension of P
-			template <size_t dimX, size_t dimP> typename funcP, // model to learn, f(x,a), whether it is with grad or hess
-			template<size_t dimX, size_t dimP, template <size_t dimX, size_t dimP> typename funcP> typename LType, // the likelihood may or may not have grad...
-			typename OptAlgo // optimization algorithm to use to learn the model		
+			typename funcP, // model to learn, f(x,a), whether it is with grad or hess
+			template<size_t dimX, size_t dimP, typename funcP> typename LType, // the likelihood may or may not have grad...
+			typename OptAlgoParamType // type of parameters for optimization algorithm
 		>
 			class IRegression
 		{
-		protected:
-			OptimizerParams prm{ 0.001, 0.001, 101 };
+		public:
+			OptimizerParams prm;
 			LType<dimX, dimP, funcP> LH; // Likelihood function
 			Point<dimP> Optimum;
+			double Val;
+
+			const funcP& f = (*LH.f);
 
 		public:
-			IRegression(DataSet<dimX>&& data, funcP<dimX, dimP>* f_pointer, OptAlgo* Algo,
+
+			IRegression(DataSet<dimX>&& data, funcP* f_pointer, OptAlgoParamType& ParamType, 
 				OptimizerParams prm_ = OptimizerParams{ 0.001, 0.001, 101 }) 
 				:
-				prm{ prm_ }, LH{ std::move(data), f_pointer }, Optimum{ Algo->Optimize() }{}
+				prm{ prm_ }, LH{ std::move(data), f_pointer }
+			{
+				OptAlgoParamType::StateType State{ ParamType.CreateState(&LH) };
 
-			double operator()(const Point<dimX>& x) { return LH.f->operator()(x, Optimum); }
+				Optimizer<1, OptAlgoParamType::StateType,
+					FuncInterface::IFunc> opt{ &State, &LH, prm };
+				opt.Optimize<OptAlgoParamType::OptAlgo>();
+
+				Optimum = opt.CurrentGuess().P;
+				Val = opt.CurrentGuess().Val;
+#ifdef DEBUG_LIB
+				std::cout << "Bestfit parameter values are: a = " << Optimum << '\n';
+				std::cout << "Corresponding likelihood is:      " << Val << '\n';
+#endif // DEBUG_LIB
+
+			}
+
+			double operator()(const Point<dimX>& x) { return f(x, Optimum); }
+
 		};
 
 	} // RegInterface

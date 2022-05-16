@@ -16,7 +16,7 @@ namespace OptLib
 		public:
 			// concrete implementation depends on the order of optimization method
 			virtual bool IsConverged(double abs_tol, double rel_tol) const  = 0;
-			PointVal<dim> Guess() const { return ItsGuess; };
+			const PointVal<dim>& Guess() const { return ItsGuess; };
 		};
 
 		/// <summary>
@@ -26,7 +26,7 @@ namespace OptLib
 		class IStateSimplex : public StateInterface::IState<dim>
 		{
 		public: // overriden from predecessor
-			virtual bool IsConverged(double abs_tol, double rel_tol) const override
+			bool IsConverged(double abs_tol, double rel_tol) const override
 			{// is average and relative tolerance met?
 				auto [avg, disp] = GuessDomain().Dispersion();
 				auto [var,std]{ VarCoef<PointVal<dim>>(avg, disp) };
@@ -42,27 +42,40 @@ namespace OptLib
 			simplex ItsGuessDomain; // the field is unique for direct optimization methods
 			std::array<double, dim + 1> FuncVals(const SetOfPoints<dim + 1, Point<dim>>& State, const FuncInterface::IFunc<dim>* f) 
 			{
-				return f->operator()(State);
+				return (*f)(State);
 			}
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
+			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, std::array<double, dim + 1>&& funcVals)
 			{
-				ItsGuessDomain = simplex{ std::move(State), std::move(funcVals)};
-				ItsGuess = GuessDomain().Mean();
+				SetDomain(
+					simplex{ 
+						simplex::make_field(
+							std::move(State), 
+							std::move(funcVals)
+						) 
+					}
+				);
 			}
 		public:
+			IStateSimplex() {}
+			/*IStateSimplex(const SetOfPoints<dim + 1, Point<dim>>& State, FuncInterface::IFunc<dim>* f)
+			{
+				auto s{ State };
+				UpdateDomain(std::move(s), f);
+			}*/
 			IStateSimplex(SetOfPoints<dim + 1, Point<dim>>&& State, FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(State), f);
+				UpdateDomain(std::move(State), f);
 			}
 			const simplex& GuessDomain() const { return ItsGuessDomain; } // unique for direct optimization methods
-			void SetDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
+			
+			void UpdateDomain(SetOfPoints<dim + 1, Point<dim>>&& State, const FuncInterface::IFunc<dim>* f)
 			{
-				SetDomain(std::move(State), std::move(FuncVals(State, f)));
+				UpdateDomain(std::move(State), std::move(FuncVals(State, f)));
 			}
-
-			void UpdateDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
+			virtual void SetDomain(SetOfPoints<dim + 1, PointVal<dim>>&& newDomain)
 			{
 				ItsGuessDomain = simplex{ std::move(newDomain) };
+
 				ItsGuess = GuessDomain().Mean();
 			}
 		};

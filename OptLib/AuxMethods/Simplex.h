@@ -3,13 +3,6 @@
 
 namespace OptLib
 {
-	namespace FuncInterface 
-	{
-		template<size_t dim>
-		class IFunc;
-	};
-
-
 	// https://docs.microsoft.com/ru-ru/cpp/parallel/auto-parallelization-and-auto-vectorization?view=msvc-170
 	// https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=AVX&cats=Store&ig_expand=6846,6917
 	// https://habr.com/ru/company/intel/blog/205552/
@@ -396,14 +389,6 @@ namespace OptLib
 		{
 			return this->Val < rhs.Val;
 		}
-
-		static PointVal CreateFromPoint(Point<dim>&& p, const FuncInterface::IFunc<dim>* f)
-		{
-			PointVal out;
-			out.P = std::move(p);
-			out.Val = f->operator()(out.P);
-			return out;
-		}
 	};
 	/// elementwise addition of vector + vector
 	template<size_t dim>
@@ -497,6 +482,18 @@ namespace OptLib
 
 	template<size_t count, typename point>
 	using SetOfPoints = std::array<point, count>;
+
+	template<size_t dim>
+	Point<dim> operator* (const SetOfPoints<dim, Point<dim>>& A, const Point<dim>& B)
+	{
+		Point<dim> out;
+		for (int i = 0; i < dim; i++)
+		{
+			out[i] = dot_product(A[i], B);
+		}
+		return out;
+	}
+
 	template<size_t count, typename point>
 	std::ostream& operator<< (std::ostream& o, const SetOfPoints<count, point>& output)
 	{
@@ -567,7 +564,13 @@ namespace OptLib
 	template<size_t count, typename point, typename pointval>
 	class SetOfPointVal : public RawSetOfPoints<count, pointval>
 	{
-	protected:
+	public:
+		/// <summary>
+		/// assembles PointVal from Point and Val
+		/// </summary>
+		/// <param name="_s"></param>
+		/// <param name="FuncVals"></param>
+		/// <returns></returns>
 		static SetOfPoints<count, pointval> make_field(SetOfPoints<count, point>&& _s, std::array<double, count>&& FuncVals)
 		{
 			SetOfPoints<count, pointval> P;
@@ -581,6 +584,13 @@ namespace OptLib
 			RawSetOfPoints<count, pointval>{ std::move(_s) } { }
 		SetOfPointVal(SetOfPoints<count, point>&& _s, std::array<double, count>&& funcVals) : // transforms points to points with vals
 			SetOfPointVal<count, point, pointval>{ std::move(make_field(std::move(_s), std::move(funcVals))) } {}
+		SetOfPoints<count, point> PointsNoVal() const
+		{
+			SetOfPoints<count, point> out{};
+			for (int i = 0; i < count; i++)
+				out[i] = Points()[i].P;
+			return out;
+		}
 	};
 
 	/// <summary>

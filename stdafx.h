@@ -28,9 +28,11 @@
 #include "OptLib/Functions/FuncParamInterface.h"
 #include "OptLib/Functions/Function.h"
 #include "OptLib/Functions/FunctionParam.h"
+#include "OptLib/Functions/ImprovedFunctions.h"
 
 #include "OptLib/States/StateInterface.h"
 #include "OptLib/States/State.h"
+#include "OptLib/States/ImprovedState.h"
 
 #include "OptLib/Optimizers/OptimizerInterface.h"
 #include "OptLib/Optimizers/OneDim/Bisection.h"
@@ -38,6 +40,7 @@
 #include "OptLib/Optimizers/OneDim/GoldenSection.h"
 #include "OptLib/Optimizers/OneDim/Dichotomy.h"
 #include "OptLib/Optimizers/NDim/NelderMead.h"
+#include "OptLib/Optimizers/NDim/Newton.h"
 
 #include "OptLib/Optimizers/OverallOptimizer.h"
 

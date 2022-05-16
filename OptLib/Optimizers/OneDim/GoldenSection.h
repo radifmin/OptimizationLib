@@ -24,8 +24,8 @@ namespace OptLib
 
 				AuxPoints[0] = GuessDomain().Points()[0];
 				AuxPoints[3] = GuessDomain().Points()[1];
-				AuxPoints[1] = PointVal<1>::CreateFromPoint(AuxPoints[0].P + resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
-				AuxPoints[2] = PointVal<1>::CreateFromPoint(AuxPoints[3].P - resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
+				AuxPoints[1] = FuncInterface::CreateFromPoint<1>(AuxPoints[0].P + resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
+				AuxPoints[2] = FuncInterface::CreateFromPoint<1>(AuxPoints[3].P - resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 			}
 		};
 	} // ConcreteOptimizer
@@ -42,16 +42,36 @@ namespace OptLib
 				if (AuxPoints[1].Val < AuxPoints[2].Val) {
 					AuxPoints[3] = AuxPoints[2];
 					AuxPoints[2] = AuxPoints[1];
-					AuxPoints[1] = PointVal<1>::CreateFromPoint(AuxPoints[0].P + State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
+					AuxPoints[1] = FuncInterface::CreateFromPoint<1>(AuxPoints[0].P + State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 				}
 				else {
 					AuxPoints[0] = AuxPoints[1];
 					AuxPoints[1] = AuxPoints[2];
-					AuxPoints[2] = PointVal<1>::CreateFromPoint(AuxPoints[3].P - State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
+					AuxPoints[2] = FuncInterface::CreateFromPoint<1>(AuxPoints[3].P - State.resphi * (AuxPoints[3].P - AuxPoints[0].P), f);
 				}
-				State.UpdateDomain({ AuxPoints[0], AuxPoints[3] });
+				State.SetDomain({ AuxPoints[0], AuxPoints[3] });
 				return State.Guess();
 			}
 		};
 	} // Optimizer
+
+	namespace StateParams
+	{
+		struct GoldenSectionParams
+		{
+		public:
+			using OptAlgo = OptLib::ConcreteOptimizer::GoldenSection;
+			using StateType = ConcreteState::StateGoldenSection;
+
+		public:
+			SetOfPoints<2, Point<1>> StartSegment;
+			GoldenSectionParams(SetOfPoints<2, Point<1>>&& sop)
+				:StartSegment{ std::move(sop) }
+			{}
+			StateType CreateState(FuncInterface::IFunc<1>* f)
+			{
+				return { std::move(StartSegment), f };
+			}
+		};
+	} // StateParams
 } // OptLib
